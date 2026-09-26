@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>House Trading Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    color-scheme: dark;
+    --bg: #0d131a;
+    --card: #151d27;
+    --raised: #1b2532;
+    --ink: #e7eef6;
+    --soft: #b9c6d4;
+    --muted: #8193a8;
+    --line: #253142;
+    --blue: #2ea8f5;
+    --pink: #ea4c82;
+    --green: #41b04b;
+    --purple: #9d52e3;
+    --amber: #f0a23a;
+    --red: #f06a6a;
+    --money: #5ed68e;
+    --tile: #1d2835;
+    --tile-neon: #17322a;
+    --tile-mega: #2a2140;
+    --radius: 16px;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--bg); }
+body {
+    margin: 0;
+    font-family: "Fredoka", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+}
+button, input { font: inherit; color: inherit; }
+.logo {
+    width: 52px; height: 52px; border-radius: 15px; flex: none;
+    background: linear-gradient(145deg, #2ea8f5, #1a7fd0);
+    display: grid; place-items: center; box-shadow: 0 6px 18px rgba(46,168,245,.3);
+}
+
+/* ── login ────────────────────────────────────────────── */
+.gate {
+    min-height: 100vh; display: grid; place-items: center; padding: 24px;
+    background:
+        radial-gradient(900px 420px at 20% -10%, rgba(46,168,245,.28), transparent 70%),
+        linear-gradient(170deg, #13283d 0%, #0f1c2a 45%, var(--bg) 100%);
+}
+.gate form {
+    width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 20px; padding: 30px 28px 26px; box-shadow: 0 18px 50px rgba(0,0,0,.45);
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.gate h1 { margin: 16px 0 4px; font-size: 26px; font-weight: 700; }
+.gate p { margin: 0 0 22px; font-size: 15px; color: var(--soft); }
+.gate .field {
+    width: 100%; display: flex; align-items: center; gap: 10px; padding: 0 14px; min-height: 56px;
+    background: var(--raised); border: 1px solid var(--line); border-radius: 14px;
+}
+.gate .field:focus-within { border-color: var(--blue); }
+.gate input { border: 0; background: transparent; outline: 0; font-size: 18px; width: 100%; letter-spacing: .5px; }
+.gate input::placeholder { color: var(--muted); letter-spacing: 0; }
+.gate button {
+    width: 100%; margin-top: 12px; height: 54px; border: 0; border-radius: 14px; cursor: pointer;
+    background: var(--blue); color: #fff; font-size: 18px; font-weight: 600;
+    box-shadow: 0 6px 18px rgba(46,168,245,.3); transition: filter .12s, opacity .12s;
+}
+.gate button:hover { filter: brightness(1.08); }
+.gate button:disabled { opacity: .55; cursor: default; filter: none; }
+.gate .msg { min-height: 22px; margin-top: 14px; font-size: 14.5px; color: var(--muted); }
+.gate .msg.bad { color: var(--red); }
+
+/* ── top band ─────────────────────────────────────────── */
+.hero {
+    background:
+        radial-gradient(900px 300px at 15% -40%, rgba(46,168,245,.35), transparent 70%),
+        linear-gradient(160deg, #13283d 0%, #0f1c2a 60%, var(--bg) 100%);
+    padding: 28px 24px 72px;
+    border-bottom: 1px solid #16222f;
+}
+.hero-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+h1 { margin: 0; font-size: 32px; font-weight: 700; }
+.sub { margin: 4px 0 0; font-size: 15px; color: var(--soft); }
+.sub.bad { color: var(--amber); }
+.right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.stats { display: flex; gap: 10px; flex-wrap: wrap; }
+.stat {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09);
+    border-radius: 14px; padding: 9px 16px; min-width: 92px;
+}
+.stat b { display: block; font-size: 22px; font-weight: 600; line-height: 1.2; }
+.stat b.money { color: var(--money); }
+.stat span { font-size: 12.5px; color: var(--muted); }
+.lock {
+    align-self: stretch; display: flex; align-items: center; gap: 8px; padding: 0 16px; cursor: pointer;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); border-radius: 14px;
+    font-size: 15px; font-weight: 500; color: var(--soft);
+}
+.lock:hover { color: var(--ink); border-color: rgba(255,255,255,.2); }
+
+/* ── controls: group switch + account search ──────────── */
+.wrap { max-width: 1280px; margin: -48px auto 48px; padding: 0 20px; }
+.toolbar {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    padding: 12px; position: sticky; top: 10px; z-index: 5;
+    display: flex; flex-wrap: wrap; gap: 12px;
+}
+.groups {
+    flex: 3 1 440px; display: flex; gap: 6px; padding: 5px;
+    background: var(--raised); border: 1px solid var(--line); border-radius: 14px;
+}
+.groups button {
+    flex: 1 1 0; min-width: 0; height: 52px; border: 0; border-radius: 10px; background: transparent;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-size: 20px; font-weight: 600; color: var(--soft); text-transform: capitalize;
+    cursor: pointer; transition: background .12s, color .12s;
+}
+.groups button:hover { background: rgba(255,255,255,.05); color: var(--ink); }
+.groups button.on { background: var(--blue); color: #fff; box-shadow: 0 4px 14px rgba(46,168,245,.35); }
+.groups .n {
+    font-size: 14px; font-weight: 600; line-height: 22px; padding: 0 9px; border-radius: 999px;
+    background: rgba(255,255,255,.08); color: var(--muted);
+}
+.groups button.on .n { background: rgba(255,255,255,.24); color: #fff; }
+.search {
+    flex: 2 1 260px; display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 0 16px;
+    background: var(--raised); border: 1px solid var(--line); border-radius: 14px;
+}
+.search:focus-within { border-color: var(--blue); }
+.search input { border: 0; background: transparent; outline: 0; font-size: 17px; width: 100%; }
+.search input::placeholder { color: var(--muted); }
+
+/* ── account cards ────────────────────────────────────── */
+.acct {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    margin-top: 16px; padding: 16px 18px 18px;
+}
+.acct-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.avatar {
+    width: 60px; height: 60px; border-radius: 16px; flex: none; object-fit: cover;
+    background: linear-gradient(#243244, #1b2735);
+}
+.avatar.fallback { display: grid; place-items: center; font-size: 26px; font-weight: 600; color: var(--muted); }
+.who { min-width: 0; }
+.who h2 { margin: 0; font-size: 19px; font-weight: 600; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.uid { font-size: 13px; font-weight: 400; color: var(--muted); }
+.group {
+    font-size: 12px; font-weight: 500; letter-spacing: .3px; text-transform: capitalize;
+    padding: 1px 9px; border-radius: 999px; background: rgba(46,168,245,.14); color: #7cc8fa;
+}
+.meta { font-size: 13.5px; color: var(--muted); display: flex; align-items: center; gap: 7px; margin-top: 3px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #4a5a6e; flex: none; }
+.dot.live { background: #35c26b; box-shadow: 0 0 0 3px rgba(53,194,107,.18); }
+.dot.recent { background: var(--amber); }
+.meta time { color: var(--ink); font-weight: 500; }
+.acct-stats { margin-left: auto; display: flex; gap: 22px; }
+.acct-stats div { text-align: right; }
+.acct-stats b { display: block; font-size: 18px; font-weight: 600; }
+.acct-stats b.money { color: var(--money); }
+.acct-stats span { font-size: 12.5px; color: var(--muted); }
+
+/* ── item tiles (modelled on the in-game backpack) ────── */
+.grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 14px 12px; margin-top: 16px;
+}
+.item { min-width: 0; }
+.tile {
+    position: relative; aspect-ratio: 1; border-radius: 14px; background: var(--tile);
+    display: grid; place-items: center; overflow: hidden;
+    border-bottom: 3px solid transparent; transition: transform .12s, box-shadow .12s, border-color .12s;
+}
+.tile.neon { background: var(--tile-neon); }
+.tile.mega { background: var(--tile-mega); }
+.tile.mega::before {                 /* mega neons glow rainbow in game; a faint rim says so here */
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
+    background: conic-gradient(#ff7eb3, #ffd36e, #7ee08a, #6ec8ff, #b28bff, #ff7eb3);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; opacity: .75;
+}
+.item:hover .tile { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,.4); border-bottom-color: var(--blue); }
+.tile img { width: 80%; height: 80%; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
+.tile.missing::after { content: "no image"; font-size: 11px; color: var(--muted); }
+.badges { position: absolute; right: 4px; bottom: 4px; display: flex; gap: 1px; }
+.b {
+    width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; flex: none;
+    color: #fff; font-size: 12px; font-weight: 700; font-style: normal;
+    border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+.b.n { background: var(--green); }
+.b.m { background: var(--purple); }
+.b.f { background: var(--blue); }
+.b.r { background: var(--pink); }
+.count {
+    position: absolute; left: 5px; top: 5px; border-radius: 999px; padding: 0 7px;
+    background: rgba(0,0,0,.6); color: #fff; font-size: 11.5px; font-weight: 600; line-height: 19px;
+}
+.name {
+    margin-top: 6px; font-size: 12.5px; text-align: center; color: var(--soft);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.price { font-size: 12.5px; text-align: center; font-weight: 600; color: var(--money); line-height: 1.3; }
+.more {
+    margin-top: 14px; border: 1px solid var(--line); background: var(--raised); border-radius: 10px;
+    padding: 7px 14px; font-size: 14px; cursor: pointer; color: #7cc8fa; font-weight: 500;
+}
+.more:hover { border-color: #3a4a60; }
+.nothing { margin-top: 14px; font-size: 14px; color: var(--muted); }
+.empty { text-align: center; color: var(--muted); padding: 48px 0; }
+
+@media (max-width: 640px) {
+    .toolbar { position: static; }   /* two full-width rows would cover half a phone screen */
+    .groups button { height: 46px; font-size: 17px; }
+    .search { min-height: 56px; }
+    .acct-stats { margin-left: 0; width: 100%; justify-content: flex-start; }
+    .acct-stats div { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<!-- The page itself holds no account data. Everything below the login comes from the Worker,
+     and the Worker only answers when it is sent the right password. -->
+<section class="gate" id="gate">
+    <form id="login" autocomplete="off">
+        <div class="logo">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+            </svg>
+        </div>
+        <h1>House Trading Dashboard</h1>
+        <p>Enter the password to continue</p>
+        <label class="field">
+            <input id="pw" type="password" placeholder="Password" autocomplete="current-password" required autofocus>
+        </label>
+        <button id="go" type="submit">Unlock</button>
+        <div class="msg" id="msg" role="alert"></div>
+    </form>
+</section>
+
+<div id="app" hidden>
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="brand">
+                <div class="logo">
+                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>House Trading Dashboard</h1>
+                    <p class="sub" id="status"></p>
+                </div>
+            </div>
+            <div class="right">
+                <div class="stats" id="stats"></div>
+                <button class="lock" id="lockBtn" type="button" title="Hide everything and ask for the password again">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                    Lock
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <section class="toolbar">
+            <div class="groups" id="groups" role="group" aria-label="Group"></div>
+            <label class="search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8193a8" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                <input id="q" type="search" placeholder="Search accounts" autocomplete="off" spellcheck="false">
+            </label>
+        </section>
+
+        <main id="accounts"></main>
+    </div>
+</div>
+
+<script>
+// ── the only line to edit ────────────────────────────────────────────────────
+// Your Cloudflare Worker's address, exactly as the Worker page shows it, e.g.
+//   const API_URL = "https://house-trading.yourname.workers.dev";
+const API_URL = "https://house-trading.nova-39153a.workers.dev";
+// ─────────────────────────────────────────────────────────────────────────────
+
+const API = API_URL.trim().replace(/\/+$/, "");
+const HEADSHOT = id => `https://api.newstargeted.com/roblox/users/v1/avatar-headshot?userid=${encodeURIComponent(id)}&size=150x150&format=Png&isCircular=false`;
+const ITEM_IMG = kind => `https://cdn.playadopt.me/items/${encodeURIComponent(kind)}.png`;
+
+const SHOW_FIRST = 18;           // tiles per account before "Show all"
+const LIVE_MS    = 10 * 60e3;    // green dot: reported within 10 min
+const RECENT_MS  = 2 * 3600e3;   // amber dot: within 2 h
+const MIN_PRICE  = 0.10;         // USD; cheaper items are never shown or counted
+const REFRESH_MS = 60e3;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const usd = n => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const clock = t => new Date(t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+// The password lives in this variable only: never in storage, a cookie or the address bar,
+// so every new visit (or reload) asks for it again.
+let password = null;
+let session = 0;                 // bumped on lock so late answers from before are thrown away
+let refreshTimer = null;
+let ACCOUNTS = [], GROUPS = [];
+const state = { q: "", group: "all", open: new Set() };
+
+// ── talking to the Worker ────────────────────────────────────────────────────
+async function askWorker(pw) {
+    let res;
+    try {
+        res = await fetch(API + "/api/dashboard", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pw }),
+            cache: "no-store",
+        });
+    } catch {
+        return { kind: "offline" };
+    }
+    let body = null;
+    try { body = await res.json(); } catch {}
+    if (res.ok && body && Array.isArray(body.accounts)) return { kind: "ok", body };
+    if (res.status === 401) return { kind: "wrong", triesLeft: body && body.triesLeft };
+    if (res.status === 429) return { kind: "locked", retryAfter: (body && body.retryAfter) || 900 };
+    return { kind: "error", detail: (body && body.error) || `HTTP ${res.status}` };
+}
+
+const waitWords = s => { const m = Math.ceil(s / 60); return m <= 1 ? "a minute" : `${m} minutes`; };
+
+function showMsg(text, bad) {
+    $("msg").textContent = text;
+    $("msg").className = bad ? "msg bad" : "msg";
+}
+
+$("login").addEventListener("submit", async e => {
+    e.preventDefault();
+    const pw = $("pw").value;
+    if (!pw) return;
+    $("go").disabled = true;
+    $("go").textContent = "Checking…";
+    showMsg("");
+    const r = await askWorker(pw);
+    $("go").disabled = false;
+    $("go").textContent = "Unlock";
+
+    if (r.kind === "ok") return unlock(pw, r.body);
+    $("pw").select();
+    if (r.kind === "wrong") {
+        showMsg(r.triesLeft > 0 ? `Wrong password. ${r.triesLeft} ${r.triesLeft === 1 ? "try" : "tries"} left before a 15 minute lockout.` : "Wrong password.", true);
+    } else if (r.kind === "locked") {
+        showMsg(`Too many wrong tries. Try again in ${waitWords(r.retryAfter)}.`, true);
+    } else if (r.kind === "offline") {
+        showMsg("Can't reach the dashboard server. Check your connection and API_URL.", true);
+    } else {
+        showMsg(`The dashboard server had a problem: ${r.detail}`, true);
+    }
+});
+
+function unlock(pw, body) {
+    password = pw;
+    $("pw").value = "";
+    showMsg("");
+    load(body);
+    $("gate").hidden = true;
+    $("app").hidden = false;
+    clearInterval(refreshTimer);
+    refreshTimer = setInterval(refresh, REFRESH_MS);
+}
+
+function lock(reason) {
+    session++;
+    password = null;
+    clearInterval(refreshTimer);
+    ACCOUNTS = []; GROUPS = [];
+    state.open.clear();
+    for (const id of ["stats", "groups", "accounts", "status"]) $(id).innerHTML = "";
+    $("app").hidden = true;
+    $("gate").hidden = false;
+    showMsg(reason || "", !!reason);
+    $("pw").focus();
+}
+
+async function refresh() {
+    if (!password) return;
+    const mine = session;
+    const r = await askWorker(password);
+    if (mine !== session) return;
+    if (r.kind === "ok") return load(r.body);
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    setStatus(`Couldn't refresh (${r.kind === "offline" ? "no connection" : r.kind === "locked" ? "locked out" : r.detail}). Showing data from ${clock(lastLoad)}.`, true);
+}
+
+// ── turning the Worker's answer into cards ───────────────────────────────────
+let lastLoad = 0;
+
+// One tile per kind + form + fly/ride, however many copies the account holds; most expensive first.
+function stack(items) {
+    const byKey = new Map();
+    for (const it of items) {
+        const price = Number(it.price);
+        if (!(price >= MIN_PRICE)) continue;
+        const key = `${it.kind}|${it.form}|${it.fly}|${it.ride}`;
+        const had = byKey.get(key);
+        if (had) had.count += it.count;
+        else byKey.set(key, {
+            kind: String(it.kind), name: String(it.name || it.kind), category: String(it.category || ""),
+            form: it.form === "mega" || it.form === "neon" ? it.form : "normal",
+            fly: it.fly === true, ride: it.ride === true, count: Math.max(1, Number(it.count) || 1), price,
+        });
+    }
+    return [...byKey.values()].sort((a, b) => b.price - a.price || a.name.localeCompare(b.name));
+}
+
+function load(body) {
+    // Clock skew between this device and the Worker would make every "x min ago" wrong, so shift to our clock.
+    const skew = Date.now() - (Number(body.now) || Date.now());
+    ACCOUNTS = body.accounts.map(a => {
+        const items = stack(Array.isArray(a.items) ? a.items : []);
+        return {
+            username: String(a.username), userId: Number(a.userId) || 0,
+            group: String(a.group || "") || "other", updatedAt: (Number(a.updatedAt) || 0) + skew, items,
+            pets:  items.filter(it => it.category === "pets").reduce((s, it) => s + it.count, 0),
+            total: items.reduce((s, it) => s + it.count, 0),
+            value: items.reduce((s, it) => s + it.price * it.count, 0),
+        };
+    }).sort((a, b) => b.updatedAt - a.updatedAt);
+    GROUPS = [...new Set(ACCOUNTS.map(a => a.group))].sort();
+    if (state.group !== "all" && !GROUPS.includes(state.group)) state.group = "all";
+    lastLoad = Date.now();
+    setStatus(`Loaded ${clock(lastLoad)} · refreshes every minute`);
+    render();
+}
+
+function setStatus(text, bad) {
+    $("status").textContent = text;
+    $("status").className = bad ? "sub bad" : "sub";
+}
+
+// ── rendering ────────────────────────────────────────────────────────────────
+function ago(ms) {
+    const s = Math.max(0, Math.round(ms / 1000));
+    if (s < 45) return "just now";
+    const m = Math.round(s / 60);
+    if (m < 60) return `${m} min ago`;
+    const h = Math.round(m / 60);
+    if (h < 24) return `${h} hour${h === 1 ? "" : "s"} ago`;
+    const d = Math.round(h / 24);
+    return `${d} day${d === 1 ? "" : "s"} ago`;
+}
+const exact = t => new Date(t).toLocaleString([], { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+const freshness = age => age < LIVE_MS ? "live" : age < RECENT_MS ? "recent" : "stale";
+const inGroup = a => state.group === "all" || a.group === state.group;
+
+function renderStats() {
+    const list = ACCOUNTS.filter(inGroup);
+    const sum = fn => list.reduce((s, a) => s + fn(a), 0);
+    $("stats").innerHTML = [
+        [sum(a => a.pets), "pets"],
+        [sum(a => a.total), "items"],
+        [usd(sum(a => a.value)), "total value", "money"],
+    ].map(([v, l, cls]) => `<div class="stat"><b class="${cls || ""}">${v}</b><span>${l}</span></div>`).join("");
+}
+
+function renderGroups() {
+    const opt = (val, label, n) => {
+        const on = state.group === val;
+        return `<button type="button" class="${on ? "on" : ""}" data-group="${esc(val)}" aria-pressed="${on}">${label}<span class="n">${n}</span></button>`;
+    };
+    $("groups").innerHTML = opt("all", "All", ACCOUNTS.length) +
+        GROUPS.map(g => opt(g, esc(g), ACCOUNTS.filter(a => a.group === g).length)).join("");
+}
+
+function tile(it) {
+    const formWord = it.form === "mega" ? "Mega Neon " : it.form === "neon" ? "Neon " : "";
+    const abil = [it.fly && "Fly", it.ride && "Ride"].filter(Boolean).join(" + ");
+    const money = it.count > 1 ? `${usd(it.price)} each, ${usd(it.price * it.count)} total` : usd(it.price);
+    const tip = `${formWord}${it.name}${abil ? ` · ${abil}` : ""}${it.count > 1 ? ` · x${it.count}` : ""} · ${money}`;
+    const badges =
+        (it.form === "mega" ? `<i class="b m">M</i>` : it.form === "neon" ? `<i class="b n">N</i>` : "") +
+        (it.fly ? `<i class="b f">F</i>` : "") + (it.ride ? `<i class="b r">R</i>` : "");
+    return `<div class="item" title="${esc(tip)}">
+        <div class="tile ${it.form === "normal" ? "" : it.form}">
+            <img src="${esc(ITEM_IMG(it.kind))}" alt="${esc(it.name)}" loading="lazy">
+            ${it.count > 1 ? `<span class="count">x${it.count}</span>` : ""}
+            ${badges ? `<div class="badges">${badges}</div>` : ""}
+        </div>
+        <div class="name">${esc(it.name)}</div>
+        <div class="price">${usd(it.price)}</div>
+    </div>`;
+}
+
+function card(a) {
+    const open = state.open.has(a.username);
+    const shown = open ? a.items : a.items.slice(0, SHOW_FIRST);
+    const age = Date.now() - a.updatedAt;
+    return `<article class="acct">
+        <header class="acct-head">
+            <img class="avatar" src="${esc(HEADSHOT(a.userId))}" alt="" data-initial="${esc(a.username[0] || "?")}">
+            <div class="who">
+                <h2>${esc(a.username)}<span class="uid">#${a.userId}</span><span class="group">${esc(a.group)}</span></h2>
+                <div class="meta">
+                    <span class="dot ${freshness(age)}" data-t="${a.updatedAt}"></span>
+                    Last updated <time data-t="${a.updatedAt}" title="${esc(exact(a.updatedAt))}">${ago(age)}</time>
+                </div>
+            </div>
+            <div class="acct-stats">
+                <div><b>${a.pets}</b><span>pets</span></div>
+                <div><b>${a.total}</b><span>items</span></div>
+                <div><b class="money">${usd(a.value)}</b><span>value</span></div>
+            </div>
+        </header>
+        ${a.items.length
+            ? `<div class="grid">${shown.map(tile).join("")}</div>`
+            : `<div class="nothing">Nothing worth ${usd(MIN_PRICE)} or more.</div>`}
+        ${a.items.length > SHOW_FIRST
+            ? `<button class="more" data-user="${esc(a.username)}">${open ? "Show less" : `Show all ${a.items.length}`}</button>` : ""}
+    </article>`;
+}
+
+function renderAccounts() {
+    if (!ACCOUNTS.length) {
+        $("accounts").innerHTML = `<div class="empty">No reports yet. An account shows up here about 10 seconds after script.lua starts on it.</div>`;
+        return;
+    }
+    const q = state.q.trim().toLowerCase();
+    const html = ACCOUNTS
+        .filter(a => inGroup(a) && (!q || a.username.toLowerCase().includes(q)))
+        .map(card).join("");
+    $("accounts").innerHTML = html || `<div class="empty">No accounts match.</div>`;
+}
+
+function render() { renderStats(); renderGroups(); renderAccounts(); }
+
+// ── wiring ───────────────────────────────────────────────────────────────────
+$("lockBtn").addEventListener("click", () => lock());
+$("q").addEventListener("input", e => { state.q = e.target.value; renderAccounts(); });
+document.addEventListener("click", e => {
+    if (!password) return;
+    const g = e.target.closest("[data-group]");
+    if (g) { state.group = g.dataset.group; return render(); }
+    const more = e.target.closest(".more");
+    if (more) {
+        const u = more.dataset.user;
+        state.open.has(u) ? state.open.delete(u) : state.open.add(u);
+        renderAccounts();
+    }
+});
+
+// Broken pictures: a letter instead of a headshot, "no image" instead of an item.
+document.addEventListener("error", e => {
+    const img = e.target;
+    if (!(img instanceof HTMLImageElement)) return;
+    if (img.classList.contains("avatar")) {
+        const d = document.createElement("div");
+        d.className = "avatar fallback";
+        d.textContent = (img.dataset.initial || "?").toUpperCase();
+        img.replaceWith(d);
+    } else if (img.closest(".tile")) {
+        img.closest(".tile").classList.add("missing");
+        img.remove();
+    }
+}, true);
+
+// Keep "x min ago" and the freshness dots honest between refreshes without re-rendering the grid.
+setInterval(() => {
+    const now = Date.now();
+    document.querySelectorAll("time[data-t]").forEach(t => { t.textContent = ago(now - Number(t.dataset.t)); });
+    document.querySelectorAll(".dot[data-t]").forEach(d => { d.className = `dot ${freshness(now - Number(d.dataset.t))}`; });
+}, 30e3);
+
+if (!/^https?:\/\//.test(API)) {
+    $("pw").disabled = $("go").disabled = true;
+    showMsg("Not connected yet: put your Worker address in API_URL near the top of the script in index.html.", true);
+}
+</script>
+</body>
+</html>
