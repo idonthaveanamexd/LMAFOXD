@@ -171,6 +171,8 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
 .acct-stats div { text-align: right; }
 .acct-stats b { display: block; font-size: 18px; font-weight: 600; }
 .acct-stats b.money { color: var(--money); }
+.acct-stats b.out, .stat b.out { color: var(--red); }
+.acct-stats b.unknown { color: var(--muted); }
 .acct-stats span { font-size: 12.5px; color: var(--muted); }
 
 /* ── item tiles (modelled on the in-game backpack) ────── */
@@ -312,11 +314,22 @@ select.in { padding: 0 6px; }
 .s-setbtn span { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .s-setbtn:hover { background: rgba(255,255,255,.04); }
 .s-setbtn.on { background: rgba(46,168,245,.14); border-color: rgba(46,168,245,.45); }
-.s-cat { margin-top: 14px; }
-.s-cat-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
-.s-cat-head code { font-size: 12.5px; color: var(--muted); }
-.s-cat-head .s-count { margin-left: auto; font-size: 12.5px; color: var(--muted); }
-.s-sep { margin: 22px 0 0; padding-top: 14px; border-top: 1px solid var(--line); }
+.s-cat { margin-top: 6px; border: 1px solid var(--line); border-radius: 12px; }
+.s-cat[open] { border-color: #34465c; }
+.s-cat > summary {
+    list-style: none; display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 14px;
+    color: var(--ink); font-size: 15px; font-weight: 500;
+}
+.s-cat > summary::-webkit-details-marker { display: none; }
+.s-cat > summary::before { content: "\25B8"; color: var(--muted); transition: transform .12s; }
+.s-cat[open] > summary::before { transform: rotate(90deg); }
+.s-cat > summary:hover { color: #7cc8fa; }
+.s-cat .s-count { margin-left: auto; font-size: 13px; font-weight: 400; color: var(--muted); white-space: nowrap; }
+.s-cat .s-count.s-bad { color: var(--red); }
+.s-cat-body { padding: 0 14px 14px; }
+.s-cat-body .btn { margin-top: 8px; }
+.s-sep { margin: 20px 0 2px; font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.s-pill[title] { cursor: help; }
 .s-field { display: grid; grid-template-columns: 220px 1fr; gap: 6px 16px; align-items: center; margin-top: 12px; }
 .s-field > span { font-weight: 500; }
 .s-field .s-hint { grid-column: 2; margin: 0; }
@@ -425,7 +438,7 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
             <div class="groups" id="setTabs" role="group" aria-label="Settings section"></div>
             <div class="savebar">
                 <span class="s-state" id="setState"></span>
-                <button class="btn" type="button" data-act="import">Import settings.lua</button>
+                <button class="btn" type="button" data-act="import" title="Load settings.lua files from your PCs">Import</button>
                 <button class="btn" type="button" data-act="history">History</button>
                 <button class="btn" type="button" data-act="discard" id="setDiscard">Discard</button>
                 <button class="btn primary" type="button" data-act="save" id="setSave">Save</button>
@@ -587,6 +600,8 @@ function load(body) {
             pets:  items.filter(it => it.category === "pets").reduce((s, it) => s + it.count, 0),
             total: items.reduce((s, it) => s + it.count, 0),
             value: items.reduce((s, it) => s + it.price * it.count, 0),
+            // houses still owned, 1 = only the base house left; null = this PC's script.lua is older
+            houses: Number.isInteger(a.houses) ? a.houses : null,
         };
     }).sort((a, b) => b.updatedAt - a.updatedAt);
     GROUPS = [...new Set(ACCOUNTS.map(a => a.group))].sort();
@@ -623,6 +638,10 @@ function renderStats() {
         [sum(a => a.pets), "pets"],
         [sum(a => a.total), "items"],
         [usd(sum(a => a.value)), "total value", "money"],
+        ...(() => {
+            const out = list.filter(a => a.houses !== null && a.houses <= 1).length;
+            return out ? [[out, `out of houses`, "out"]] : [];
+        })(),
     ].map(([v, l, cls]) => `<div class="stat"><b class="${cls || ""}">${v}</b><span>${l}</span></div>`).join("");
 }
 
@@ -654,6 +673,12 @@ function tile(it) {
     </div>`;
 }
 
+function houseStat(n) {
+    if (n === null) return `<div title="Not reported yet. Update script.lua on this account's PC."><b class="unknown">?</b><span>houses</span></div>`;
+    if (n <= 1) return `<div title="Only the base house is left, so the script has stopped trading."><b class="out">${n}</b><span>houses</span></div>`;
+    return `<div><b>${n}</b><span>houses</span></div>`;
+}
+
 function card(a) {
     const open = state.open.has(a.username);
     const shown = open ? a.items : a.items.slice(0, SHOW_FIRST);
@@ -671,6 +696,7 @@ function card(a) {
             <div class="acct-stats">
                 <div><b>${a.pets}</b><span>pets</span></div>
                 <div><b>${a.total}</b><span>items</span></div>
+                ${houseStat(a.houses)}
                 <div><b class="money">${usd(a.value)}</b><span>value</span></div>
             </div>
         </header>
@@ -777,13 +803,15 @@ const CAT_INFO = {
     values_source:       ["\"Do you use elve?\"", ""],
 };
 const DEFAULT_KEYS = ["suggestion_range_offset", "trade_message_delay", "dont_trade_for_more_than"];
+// dont_trade_for_more_than is still stored for old scripts, but nothing reads it any more, so it isn't shown.
+const SHOWN_KEYS = ["suggestion_range_offset", "trade_message_delay"];
 const DEFAULT_INFO = {
     suggestion_range_offset:  ["Suggestion range", "When it suggests a pet from their inventory, it looks for one worth between the price and the price plus this."],
     trade_message_delay:      ["Message delay (s)", "Seconds between the lines of Trade opens."],
     dont_trade_for_more_than: ["Don't trade above", "Kept for older script versions; the current script doesn't use it."],
 };
 const WEBHOOKS = [
-    ["no_houses", "No houses left", "Pinged when an account has no house to trade."],
+    ["no_houses", "No houses left", "Pinged when an account runs out of houses."],
     ["success",   "Successful trades", ""],
     ["failed",    "Failed trades", ""],
     ["chat_log",  "Chat logs", ""],
@@ -794,7 +822,7 @@ const RE_GROUP = /^[A-Za-z0-9_]{1,40}$/, RE_ACCOUNT = /^[A-Za-z0-9_]{3,20}$/,
 
 const S = {
     view: "inv", loaded: false, busy: false, version: 0, savedAt: 0, doc: null, base: "", history: [],
-    tab: "accounts", set: "Default", q: "", sel: new Set(), open: new Set(), posText: null, posErr: "", msg: null,
+    tab: "accounts", set: "Default", q: "", sel: new Set(), open: new Set(), openCats: new Set(), posText: null, posErr: "", msg: null,
 };
 let IMP = null;   // import dialog state
 
@@ -832,7 +860,7 @@ function settingsDirty() { return !!S.doc && (JSON.stringify(S.doc) !== S.base |
 function resetSettings() {
     Object.assign(S, { loaded: false, busy: false, version: 0, savedAt: 0, doc: null, base: "", history: [],
         q: "", posText: null, posErr: "", msg: null });
-    S.sel.clear(); S.open.clear();
+    S.sel.clear(); S.open.clear(); S.openCats.clear();
     IMP = null;
     closeModal();
     for (const id of ["setTabs", "setMsg", "setBody", "setState"]) $(id).innerHTML = "";
@@ -907,8 +935,7 @@ function adopt(body) {
     S.sel.clear();
     if (!S.doc.message_sets[S.set]) S.set = "Default";
     if (!S.version) {
-        S.msg = { kind: "info", html: `Nothing is saved here yet. Press <b>Import settings.lua</b> and pick the settings.lua
-            from each PC (one at a time or all together), check the result, then press <b>Save</b>.` };
+        S.msg = { kind: "info", html: `Nothing saved yet. Press <b>Import</b> to load your settings.lua files, then <b>Save</b>.` };
     }
     renderSettings();
 }
@@ -936,11 +963,6 @@ function usage(field) {          // field value -> [account names]
     const m = {};
     for (const { name, a } of allAccounts()) (m[a[field].trim ? a[field].trim() : a[field]] ??= []).push(name);
     return m;
-}
-function nameList(names, max = 12) {
-    if (!names || !names.length) return "no accounts";
-    const sorted = [...names].sort(ci);
-    return esc(sorted.slice(0, max).join(", ")) + (sorted.length > max ? ` and ${sorted.length - max} more` : "");
 }
 // Rebuilds an object with one key renamed, keeping the order.
 function renameKey(obj, from, to) {
@@ -987,12 +1009,10 @@ function accountsTab() {
             <input id="sq" type="search" placeholder="Search accounts or houses" autocomplete="off" spellcheck="false" value="${esc(S.q)}">
         </label>
         <button class="btn" data-act="addGroup">+ Add group</button>
-    </div>
-    <p class="s-hint">Each account trades the house written next to it and says the lines of its message set.
-        <b>More</b> lets one account use its own numbers from the General tab. A group is one set of Discord webhooks (General tab).</p></div>`;
+    </div></div>`;
 
     if (!groups.length) {
-        html += `<div class="card empty">No accounts yet. Press <b>Import settings.lua</b> at the top, or add a group.</div>`;
+        html += `<div class="card empty">No accounts yet. Press <b>Import</b> or add a group.</div>`;
     }
     for (const g of groups) {
         const grp = S.doc.groups[g];
@@ -1006,15 +1026,15 @@ function accountsTab() {
             <h2>${esc(g)} <span class="s-pill">${plural(total, "account")}</span>
                 <span class="s-tools">
                     <button class="btn small" data-act="renameGroup">Rename</button>
-                    <button class="btn small danger" data-act="deleteGroup">Delete group</button>
+                    <button class="btn small danger" data-act="deleteGroup">Delete</button>
                 </span></h2>
             ${rows.length ? `<div class="s-scroll"><table class="s-tbl">
                 <thead><tr><th class="s-ck"><input type="checkbox" data-act="selAll" ${allOn ? "checked" : ""} title="Select all"></th>
                     <th>Account</th><th>House</th><th>Min accept</th><th>Message set</th><th></th></tr></thead>
                 <tbody>${rows.map(([n, a]) => acctRow(n, a, sets)).join("")}</tbody>
-            </table></div>` : `<p class="s-hint">No accounts in this group yet.</p>`}
+            </table></div>` : ""}
             <div class="s-add">
-                <input class="in" data-addnames placeholder="Add accounts: type one or more usernames (spaces or commas between)">
+                <input class="in" data-addnames placeholder="Add usernames…" title="One or more, separated by spaces or commas">
                 <button class="btn" data-act="addAccounts">Add</button>
             </div>
         </section>`;
@@ -1025,10 +1045,9 @@ function accountsTab() {
 }
 
 function acctRow(n, a, sets) {
-    const ov = Object.keys(a.overrides).length;
+    const ov = SHOWN_KEYS.filter(k => a.overrides[k] !== undefined).length;
     const house = a.house.trim();
-    const note = !house ? `<div class="s-note s-bad">Needs a house</div>`
-        : !S.doc.house_adverts[house] ? `<div class="s-note s-warn">No adverts for this house yet</div>` : "";
+    const note = houseNote(house);
     let html = `<tr data-a="${esc(n)}">
         <td class="s-ck"><input type="checkbox" data-act="sel" ${S.sel.has(n) ? "checked" : ""}></td>
         <td><button class="s-link" data-act="renameAcct" title="Rename">${esc(n)}</button></td>
@@ -1037,17 +1056,19 @@ function acctRow(n, a, sets) {
         <td><select class="in" data-f="message_set">${sets.map(s =>
             `<option value="${esc(s)}" ${s === a.message_set ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></td>
         <td class="s-end">
-            <button class="btn small" data-act="toggleMore" title="Numbers for this account only">${ov ? `More (${ov})` : "More"}</button>
+            <button class="btn small" data-act="toggleMore" title="Own suggestion range / message delay">${ov ? `More (${ov})` : "More"}</button>
             <button class="btn small danger" data-act="deleteAcct" title="Delete account">✕</button>
         </td></tr>`;
     if (S.open.has(n)) {
-        html += `<tr class="s-extra" data-a="${esc(n)}"><td></td><td colspan="5"><div class="s-ov">${DEFAULT_KEYS.map(k =>
-            `<label>${DEFAULT_INFO[k][0]}<input class="in s-num" type="number" min="0" step="any" data-f="ov.${k}"
-                value="${esc(a.overrides[k] ?? "")}" placeholder="${esc(S.doc.defaults[k])} (General)"></label>`).join("")}</div>
-            <p class="s-hint" style="margin:0 0 6px">Empty = use the number from the General tab.</p></td></tr>`;
+        html += `<tr class="s-extra" data-a="${esc(n)}"><td></td><td colspan="5"><div class="s-ov">${SHOWN_KEYS.map(k =>
+            `<label title="${esc(DEFAULT_INFO[k][1])} Empty = the General tab's ${esc(S.doc.defaults[k])}.">${DEFAULT_INFO[k][0]}<input class="in s-num" type="number" min="0" step="any" data-f="ov.${k}"
+                value="${esc(a.overrides[k] ?? "")}" placeholder="${esc(S.doc.defaults[k])}"></label>`).join("")}</div></td></tr>`;
     }
     return html;
 }
+
+const houseNote = house => !house ? `<div class="s-note s-bad">No house</div>`
+    : !S.doc.house_adverts[house] ? `<div class="s-note s-warn">No adverts</div>` : "";
 
 function bulkBar(sets, groups) {
     const opts = list => list.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
@@ -1058,7 +1079,7 @@ function bulkBar(sets, groups) {
         <span class="s-pair"><label>Message set<select class="in" id="bkSet">${opts(sets)}</select></label><button class="btn small" data-act="bulk" data-k="set">Set</button></span>
         <span class="s-pair"><label>Group<select class="in" id="bkGroup">${opts(groups)}</select></label><button class="btn small" data-act="bulk" data-k="move">Move</button></span>
         <button class="btn small danger" data-act="bulk" data-k="delete">Delete</button>
-        <button class="btn small" data-act="bulk" data-k="clear">Clear selection</button>
+        <button class="btn small" data-act="bulk" data-k="clear">Clear</button>
     </div>`;
 }
 
@@ -1075,48 +1096,53 @@ function messagesTab() {
     const list = setNames().map(s => `<button class="s-setbtn ${s === S.set ? "on" : ""}" data-act="pickSet" data-set="${esc(s)}">
         <b>${esc(s)}</b><span>${plural((used[s] || []).length, "account")}</span></button>`).join("");
 
-    const catCard = (cat, required) => {
+    const cats = [...REQUIRED_CATS, ...OPTIONAL_CATS, ...extra];
+    const allOpen = cats.every(c => S.openCats.has(c));
+
+    const catCard = cat => {
         const lines = set[cat] || [];
         const [title, help] = CAT_INFO[cat] || [cat, "Not used by the current script."];
+        const [status, cls] = catStatus(cat);
         let placeholder = "One message per line";
-        let state = "";
+        let copy = "";
         if (!isDef && !lines.length) {
             const d = def[cat] || [];
-            placeholder = d.length ? `Empty: uses Default's ${d.length} line${d.length === 1 ? "" : "s"}:\n` + d.slice(0, 6).join("\n") + (d.length > 6 ? "\n…" : "")
-                : "Empty: uses Default's (also empty)";
-            state = `<button class="btn small" data-act="copyDef" data-cat="${cat}">Copy Default's lines</button>`;
-        } else if (isDef && !lines.length) {
-            state = required ? `<span class="s-bad">Needs at least one line</span>` : `<span>Empty = the script's own lines</span>`;
+            placeholder = d.length ? "Using Default's lines:\n" + d.slice(0, 6).join("\n") + (d.length > 6 ? "\n…" : "") : "Using Default's (empty)";
+            if (d.length) copy = `<button class="btn small" data-act="copyDef" data-cat="${cat}">Copy Default's lines to edit</button>`;
         }
-        return `<div class="s-cat">
-            <div class="s-cat-head"><h3>${esc(title)}</h3><code>${esc(cat)}</code>
-                <span class="s-count" data-count="${esc(cat)}">${lines.length ? plural(lines.length, "line") : ""}</span>${state}</div>
-            ${help ? `<p class="s-hint" style="margin:0 0 6px">${help}</p>` : ""}
-            <textarea class="ta" data-cat="${esc(cat)}" rows="${Math.min(14, Math.max(3, lines.length + 1))}" spellcheck="false"
-                placeholder="${esc(placeholder)}">${esc(lines.join("\n"))}</textarea></div>`;
+        const tip = (help ? help.replace(/<[^>]+>/g, "") + " " : "") + `(${cat})`;
+        return `<details class="s-cat" data-catbox="${esc(cat)}" ${S.openCats.has(cat) ? "open" : ""}>
+            <summary title="${esc(tip)}">${esc(title)}<span class="s-count ${cls}" data-count="${esc(cat)}">${status}</span></summary>
+            <div class="s-cat-body"><textarea class="ta" data-cat="${esc(cat)}" rows="${Math.min(14, Math.max(3, lines.length + 1))}" spellcheck="false"
+                placeholder="${esc(placeholder)}">${esc(lines.join("\n"))}</textarea>${copy}</div></details>`;
     };
 
     return `<div class="s-cols">
         <div class="card s-sets"><h3>Message sets</h3>
-            <p class="s-hint">Pick an account's set on the Accounts tab.</p>
             ${list}
             <button class="btn" style="width:100%;margin-top:12px" data-act="newSet">+ New set</button>
         </div>
         <div class="card">
-            <h2>${esc(S.set)} <span class="s-tools">
+            <h2>${esc(S.set)}${isDef ? "" : ` <span class="s-pill" title="Empty categories use Default's lines">changes Default</span>`}
+                <span class="s-tools">
+                <button class="btn small" data-act="toggleCats">${allOpen ? "Collapse all" : "Expand all"}</button>
                 ${isDef ? "" : `<button class="btn small" data-act="renameSet">Rename</button>`}
                 <button class="btn small" data-act="dupSet">Duplicate</button>
                 ${isDef ? "" : `<button class="btn small danger" data-act="deleteSet">Delete</button>`}
             </span></h2>
-            <p class="s-hint">${isDef
-                ? "Every account says these unless its set changes a category. One message per line; the script picks one at random."
-                : "Fill only the categories this set should change; empty ones use Default's lines. One message per line."}
-                <br>Used by: ${nameList(used[S.set])}</p>
-            ${REQUIRED_CATS.map(c => catCard(c, true)).join("")}
-            <div class="s-sep"><h3>Optional</h3><p class="s-hint">Rarer moments. Left empty in Default, the script uses lines of its own.</p></div>
-            ${OPTIONAL_CATS.map(c => catCard(c, false)).join("")}
-            ${extra.length ? `<div class="s-sep"><h3>Other</h3><p class="s-hint">Came in from an import; the current script doesn't use them.</p></div>${extra.map(c => catCard(c, false)).join("")}` : ""}
+            ${REQUIRED_CATS.map(catCard).join("")}
+            <div class="s-sep">Rarely used</div>
+            ${OPTIONAL_CATS.map(catCard).join("")}
+            ${extra.length ? `<div class="s-sep" title="Came in from an import; the current script doesn't use them">Not used</div>${extra.map(catCard).join("")}` : ""}
         </div></div>`;
+}
+
+// The right-hand label of a category row: [text, class].
+function catStatus(cat) {
+    const n = (S.doc.message_sets[S.set][cat] || []).length;
+    if (n) return [plural(n, "line"), ""];
+    if (S.set !== "Default") return ["uses Default", ""];
+    return REQUIRED_CATS.includes(cat) ? ["empty, needs a line", "s-bad"] : ["script's own lines", ""];
 }
 
 // Adverts ─────────────────────────────────────────────────────────────────────
@@ -1124,26 +1150,23 @@ function advertsTab() {
     const used = usage("house");
     const houses = Object.keys(S.doc.house_adverts);
     const missing = Object.keys(used).filter(h => h && !S.doc.house_adverts[h]).sort(ci);
-    let html = `<div class="card">
-        <h2>Houses and adverts</h2>
-        <p class="s-hint">One advert per line. The script picks one per server, so every account in that server shows the same one.
-            Keep the <code>15+ elve</code> part in each line: the script reads its price from it (without it, it uses the account's min accept).</p>
-        <div class="s-add"><input class="in" id="newHouse" placeholder="New house name, e.g. Sandbox"><button class="btn" data-act="addHouse">+ Add house</button></div>
-    </div>`;
+    let html = `<div class="card"><div class="s-row">
+        <input class="in" id="newHouse" style="flex:1 1 240px" placeholder="New house name">
+        <button class="btn" data-act="addHouse">+ Add house</button>
+    </div></div>`;
     if (missing.length) {
-        html += `<div class="s-msg">These houses are given to accounts but have no adverts, so those accounts won't advertise:
-            ${missing.map(h => `<b>${esc(h)}</b> (${plural(used[h].length, "account")})`).join(", ")}.
-            ${missing.map(h => `<button class="btn small" data-act="addHouse" data-house="${esc(h)}">Add ${esc(h)}</button>`).join("")}</div>`;
+        html += `<div class="s-msg">No adverts yet:
+            ${missing.map(h => `<button class="btn small" data-act="addHouse" data-house="${esc(h)}">+ ${esc(h)} (${plural(used[h].length, "account")})</button>`).join("")}</div>`;
     }
     for (const h of houses) {
         const lines = S.doc.house_adverts[h];
         html += `<section class="card" data-house="${esc(h)}">
-            <h2>${esc(h)} <span class="s-pill ${used[h] ? "" : "warn"}">${plural((used[h] || []).length, "account")}</span>
+            <h2>${esc(h)} <span class="s-pill ${used[h] ? "" : "warn"}" title="${esc((used[h] || []).slice().sort(ci).join(", ") || "No account trades this house")}">${plural((used[h] || []).length, "account")}</span>
                 <span class="s-tools"><button class="btn small" data-act="renameHouse">Rename</button>
                 <button class="btn small danger" data-act="deleteHouse">Delete</button></span></h2>
-            <p class="s-hint">Used by: ${nameList(used[h])}</p>
             <textarea class="ta" style="margin-top:10px" data-adverts rows="${Math.min(10, Math.max(2, lines.length + 1))}"
-                spellcheck="false" placeholder="One advert per line">${esc(lines.join("\n"))}</textarea>
+                spellcheck="false" placeholder="One advert per line, with a price like 15+ elve"
+                title="The script picks one per server and reads the price from the '15+ elve' part">${esc(lines.join("\n"))}</textarea>
             <div class="s-note s-warn" data-elve>${elveWarning(lines)}</div>
         </section>`;
     }
@@ -1151,7 +1174,7 @@ function advertsTab() {
 }
 const elveWarning = lines => {
     const n = lines.filter(l => !/\d+\s*(\+|-\s*\d+)?\s*elve/i.test(l)).length;
-    return n ? `${plural(n, "line")} without a "15+ elve" style price.` : "";
+    return n ? `${plural(n, "line")} without a price like "15+ elve"` : "";
 };
 
 // Positions ───────────────────────────────────────────────────────────────────
@@ -1160,8 +1183,7 @@ function positionsTab() {
     const text = S.posText ?? S.doc.saved_positions.map(cfText).join("\n");
     return `<div class="card">
         <h2>Door positions <span class="s-pill" id="posCount">${plural(S.doc.saved_positions.length, "position")}</span></h2>
-        <p class="s-hint">One <code>CFrame.new(…)</code> per line, the same as in settings.lua. The script picks one per server.</p>
-        <textarea class="ta" id="posTa" style="margin-top:10px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;white-space:pre;overflow-x:auto"
+        <textarea class="ta" id="posTa" title="One CFrame.new(…) per line; the script picks one per server" style="margin-top:10px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;white-space:pre;overflow-x:auto"
             rows="${Math.min(20, Math.max(6, S.doc.saved_positions.length + 2))}" spellcheck="false"
             placeholder="CFrame.new(6013.0, 10359.6, -12006.0, 0.0088, 0, -0.9999, 0, 1, 0, 0.9999, 0, 0.0088)">${esc(text)}</textarea>
         <div class="s-note s-bad" id="posErr">${esc(S.posErr)}</div>
@@ -1186,23 +1208,20 @@ function parsePositions(text) {
 
 // General ─────────────────────────────────────────────────────────────────────
 function generalTab() {
-    let html = `<div class="card"><h2>Numbers</h2>
-        <p class="s-hint">For every account, unless the account sets its own under <b>More</b> on the Accounts tab.</p>
-        ${DEFAULT_KEYS.map(k => `<label class="s-field"><span>${DEFAULT_INFO[k][0]}</span>
-            <input class="in s-num" type="number" min="0" step="any" data-def="${k}" value="${esc(S.doc.defaults[k])}">
-            <p class="s-hint">${DEFAULT_INFO[k][1]}</p></label>`).join("")}
+    let html = `<div class="card"><h2>Defaults</h2>
+        ${SHOWN_KEYS.map(k => `<label class="s-field" title="${esc(DEFAULT_INFO[k][1])} An account can change it under More.">
+            <span>${DEFAULT_INFO[k][0]}</span>
+            <input class="in s-num" type="number" min="0" step="any" data-def="${k}" value="${esc(S.doc.defaults[k])}"></label>`).join("")}
     </div>`;
     const groups = Object.keys(S.doc.groups);
     for (const g of groups) {
         const w = S.doc.groups[g].webhooks;
         html += `<div class="card" data-g="${esc(g)}"><h2>Webhooks: ${esc(g)}</h2>
-            <p class="s-hint">Discord webhook links for this group's accounts. Leave empty to send nothing.</p>
-            ${WEBHOOKS.map(([k, label, help]) => `<label class="s-field"><span>${label}</span>
-                <input class="in" type="url" data-wh="${k}" value="${esc(w[k])}" placeholder="https://discord.com/api/webhooks/…" spellcheck="false" autocomplete="off">
-                ${help ? `<p class="s-hint">${help}</p>` : ""}</label>`).join("")}
+            ${WEBHOOKS.map(([k, label, help]) => `<label class="s-field"${help ? ` title="${esc(help)}"` : ""}><span>${label}</span>
+                <input class="in" type="url" data-wh="${k}" value="${esc(w[k])}" placeholder="Discord webhook link (empty = off)" spellcheck="false" autocomplete="off"></label>`).join("")}
         </div>`;
     }
-    if (!groups.length) html += `<div class="card empty">Webhooks are set per group. Add a group on the Accounts tab first.</div>`;
+    if (!groups.length) html += `<div class="card empty">Add a group on the Accounts tab to set its webhooks.</div>`;
     return html;
 }
 
@@ -1238,7 +1257,7 @@ $("setBody").addEventListener("input", e => {
         const lines = toLines(t.value);
         if (lines.length) set[cat] = lines; else delete set[cat];
         const c = $("setBody").querySelector(`[data-count="${CSS.escape(cat)}"]`);
-        if (c) c.textContent = lines.length ? plural(lines.length, "line") : "";
+        if (c) { const [text, cls] = catStatus(cat); c.textContent = text; c.className = `s-count ${cls}`; }
         return changed();
     }
     if (t.dataset.adverts !== undefined) {
@@ -1275,11 +1294,14 @@ $("setBody").addEventListener("change", e => {
         if (!found) return;
         const td = e.target.parentElement;
         td.querySelector(".s-note")?.remove();
-        const h = found.a.house.trim();
-        if (!h) td.insertAdjacentHTML("beforeend", `<div class="s-note s-bad">Needs a house</div>`);
-        else if (!S.doc.house_adverts[h]) td.insertAdjacentHTML("beforeend", `<div class="s-note s-warn">No adverts for this house yet</div>`);
+        td.insertAdjacentHTML("beforeend", houseNote(found.a.house.trim()));
     }
 });
+// Remember which message categories are open across re-renders ("toggle" doesn't bubble).
+$("setBody").addEventListener("toggle", e => {
+    const cat = e.target.dataset && e.target.dataset.catbox;
+    if (cat) e.target.open ? S.openCats.add(cat) : S.openCats.delete(cat);
+}, true);
 $("setBody").addEventListener("keydown", e => {
     if (e.key !== "Enter") return;
     if (e.target.matches("[data-addnames]")) { e.preventDefault(); act("addAccounts", e.target); }
@@ -1462,11 +1484,18 @@ const ACTIONS = {
         S.set = "Default";
         changed(); renderSettings();
     },
+    toggleCats: () => {
+        const known = new Set([...REQUIRED_CATS, ...OPTIONAL_CATS]);
+        const cats = [...known, ...new Set(Object.values(S.doc.message_sets).flatMap(Object.keys))];
+        if (cats.every(c => S.openCats.has(c))) S.openCats.clear(); else cats.forEach(c => S.openCats.add(c));
+        renderSettings();
+    },
     copyDef: el => {
         const cat = el.dataset.cat;
         const d = S.doc.message_sets.Default[cat];
         if (!d || !d.length) return;
         S.doc.message_sets[S.set][cat] = clone(d);
+        S.openCats.add(cat);
         changed(); renderSettings();
     },
 
@@ -1530,13 +1559,13 @@ async function save(overVersion) {
     if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
     if (r.kind === "ok") {
         adopt(r.body);
-        return say("ok", `Saved as version ${S.version}. Running accounts pick it up within 5 minutes; accounts that start now get it straight away.`);
+        return say("ok", `Saved (version ${S.version}). Running accounts pick it up within 5 minutes.`);
     }
     renderSaveState();
     if (r.kind === "conflict") {
-        return say("bad", `These settings were saved from somewhere else meanwhile (now version ${Number(r.body.version) || "?"}).<br>
-            <button class="btn small" data-act="reload">Load that version</button> (your changes here are lost) or
-            <button class="btn small" data-act="forceSave" data-v="${Number(r.body.version) || 0}">Save mine over it</button>`);
+        return say("bad", `Someone else saved in the meantime (version ${Number(r.body.version) || "?"}).<br>
+            <button class="btn small" data-act="reload">Load theirs</button>
+            <button class="btn small" data-act="forceSave" data-v="${Number(r.body.version) || 0}">Keep mine</button>`);
     }
     say("bad", `Not saved: ${esc(failText(r))}`);
 }
@@ -1556,7 +1585,6 @@ async function openHistory() {
         <td>${esc(exact(h.savedAt))}</td><td>${esc(h.note)}</td>
         <td style="text-align:right">${h.version === S.version ? "" : `<button class="btn small" data-act="openVersion" data-v="${h.version}">Open</button>`}</td></tr>`).join("");
     openModal(`<h2>History</h2>
-        <p class="s-hint">The last 30 saves. <b>Open</b> puts that version in the editor; press Save to make it the current one again.</p>
         ${rows ? `<table class="s-hist">${rows}</table>` : `<p class="s-hint">Nothing saved yet.</p>`}
         <div class="s-foot"><button class="btn" data-act="closeModal">Close</button></div>`);
 }
@@ -1855,8 +1883,8 @@ function renderImport() {
         ? `<span class="s-bad">${esc(f.error)}</span>`
         : esc(summarize(f.data))}${f.data && f.data.notes.length
         ? `<ul class="s-list s-warn">${[...new Set(f.data.notes)].slice(0, 8).map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}</div>`).join("");
-    const opt = (k, title, help) => `<label class="s-check"><input type="checkbox" data-opt="${k}" ${o[k] ? "checked" : ""}>
-        <span>${title}<small>${help}</small></span></label>`;
+    const opt = (k, title, help) => `<label class="s-check" title="${esc(help)}"><input type="checkbox" data-opt="${k}" ${o[k] ? "checked" : ""}>
+        <span>${title}</span></label>`;
     const ready = IMP.files.some(f => f.data);
     let preview = "";
     if (ready) {
@@ -1878,21 +1906,18 @@ function renderImport() {
             : `<p class="s-hint">Nothing: the editor already matches.</p>`}`;
     }
     openModal(`<h2>Import settings.lua</h2>
-        <p class="s-hint">Pick the settings.lua of each PC; you can select several at once. This only fills in the editor:
-            check it, then press Save. Nothing in the file is run.</p>
         <label class="s-drop"><input type="file" id="impFile" accept=".lua,.txt,text/plain" multiple>
-            <b>Choose settings.lua files</b><br><span class="s-hint">or drop them here</span></label>
-        <details><summary>…or paste the text instead</summary>
+            <b>Choose files</b><br><span class="s-hint">or drop them here (several at once is fine)</span></label>
+        <details><summary>…or paste the text</summary>
             <textarea class="ta" id="impPaste" rows="6" style="margin-top:8px" placeholder="return { … }" spellcheck="false"></textarea>
             <button class="btn small" style="margin-top:8px" data-act="impPaste">Read pasted text</button></details>
         ${files ? `<div class="s-files">${files}</div>` : ""}
-        <h3 style="margin-top:18px">Take from the file</h3>
+        <h3 style="margin-top:18px">Take</h3>
         ${opt("accounts", "Accounts, groups and webhooks", "Adds new accounts and updates the house, min accept and own numbers of ones already here. Message sets picked on the site are kept.")}
         ${opt("adverts", "Adverts", "Adds new houses and replaces the adverts of houses in the file.")}
         ${opt("messages", "Messages", "Replaces the Default message set with the file's messages.")}
         ${opt("positions", "Positions", "Replaces the door positions.")}
         ${opt("general", "General numbers", "Replaces suggestion range, message delay, etc.")}
-        ${IMP.files.filter(f => f.data).length > 1 ? `<p class="s-hint">With several files, later ones win where they disagree.</p>` : ""}
         ${preview}
         <div class="s-foot"><button class="btn" data-act="closeModal">Cancel</button>
             <button class="btn primary" data-act="impApply" ${ready ? "" : "disabled"}>Put into the editor</button></div>`);
@@ -1936,8 +1961,7 @@ const IMPORT_ACTIONS = {
         closeModal();
         S.tab = "accounts";
         renderSettings();
-        say("info", `Imported into the editor: ${plural(st.added.length, "new account")}, ${plural(st.changed.length + st.moved.length, "changed one")}.
-            Look it over, then press <b>Save</b>. To add another PC's settings.lua, press Import again.`);
+        say("info", `Imported ${plural(st.added.length, "new account")}, ${plural(st.changed.length + st.moved.length, "changed one")}. Press <b>Save</b> to keep it.`);
     },
     openVersion: async el => {
         if (settingsDirty() && !confirm("Open this version and lose your unsaved changes?")) return;
@@ -1952,7 +1976,7 @@ const IMPORT_ACTIONS = {
         S.posText = null; S.posErr = ""; S.sel.clear();
         closeModal();
         renderSettings();
-        say("info", `Showing version ${v} from ${esc(exact(r.body.savedAt))}. Press <b>Save</b> to make it the current settings again, or <b>Discard</b> to go back.`);
+        say("info", `Viewing version ${v} (${esc(exact(r.body.savedAt))}). <b>Save</b> restores it, <b>Discard</b> goes back.`);
     },
 };
 
