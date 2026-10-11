@@ -222,6 +222,133 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
 .nothing { margin-top: 14px; font-size: 14px; color: var(--muted); }
 .empty { text-align: center; color: var(--muted); padding: 48px 0; }
 
+/* ── page switch in the top band ──────────────────────── */
+.nav {
+    align-self: stretch; display: flex; gap: 4px; padding: 4px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); border-radius: 14px;
+}
+.nav button {
+    border: 0; background: transparent; border-radius: 10px; padding: 0 16px; min-height: 40px; cursor: pointer;
+    font-size: 15px; font-weight: 600; color: var(--soft);
+}
+.nav button:hover { color: var(--ink); }
+.nav button.on { background: var(--blue); color: #fff; }
+
+/* ── settings ─────────────────────────────────────────── */
+select { font: inherit; color: inherit; }
+textarea { font: inherit; color: inherit; }
+#setTabs { align-self: center; flex-basis: 420px; }
+.savebar { flex: 2 1 340px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.s-state { margin-right: auto; font-size: 14.5px; color: var(--muted); }
+.s-state.dirty { color: var(--amber); font-weight: 500; }
+.btn {
+    height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--raised);
+    font-size: 14.5px; font-weight: 500; white-space: nowrap; cursor: pointer;
+}
+.btn:hover { border-color: #3a4a60; }
+.btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+.btn.danger { color: var(--red); }
+.btn.small { height: 32px; padding: 0 10px; font-size: 13.5px; }
+.btn:disabled { opacity: .45; cursor: default; }
+.in, .ta {
+    background: var(--raised); border: 1px solid var(--line); border-radius: 10px; outline: 0;
+    font-size: 14.5px; min-width: 0;
+}
+.in { height: 36px; padding: 0 10px; width: 100%; }
+select.in { padding: 0 6px; }
+.in:focus, .ta:focus { border-color: var(--blue); }
+.ta { display: block; width: 100%; padding: 9px 12px; line-height: 1.5; resize: vertical; font-size: 14px; }
+.ta::placeholder, .in::placeholder { color: #5f7186; }
+.s-num { width: 100px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); margin-top: 16px; padding: 16px 18px 18px; }
+.card h2 { margin: 0; font-size: 19px; font-weight: 600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.s-tools { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.s-pill { font-size: 12.5px; font-weight: 500; padding: 1px 9px; border-radius: 999px; background: rgba(46,168,245,.14); color: #7cc8fa; }
+.s-pill.warn { background: rgba(240,162,58,.14); color: var(--amber); }
+.s-hint { font-size: 13.5px; color: var(--muted); margin: 6px 0 0; line-height: 1.45; }
+.s-hint code, .s-msg code { background: var(--raised); padding: 0 5px; border-radius: 5px; color: var(--soft); }
+.s-warn { color: var(--amber); }
+.s-bad { color: var(--red); }
+.s-msg {
+    margin-top: 16px; padding: 12px 16px; border-radius: 12px; font-size: 14.5px; line-height: 1.45;
+    background: rgba(46,168,245,.1); border: 1px solid rgba(46,168,245,.35);
+}
+.s-msg.ok { background: rgba(94,214,142,.08); border-color: rgba(94,214,142,.35); }
+.s-msg.bad { background: rgba(240,106,106,.08); border-color: rgba(240,106,106,.4); }
+.s-msg .btn { margin: 6px 6px 0 0; }
+.s-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.s-row .search { flex: 1 1 260px; min-height: 48px; }
+.s-scroll { overflow-x: auto; margin-top: 10px; }
+.s-tbl { width: 100%; border-collapse: collapse; min-width: 640px; }
+.s-tbl th { text-align: left; font-size: 12.5px; font-weight: 500; color: var(--muted); padding: 0 6px 6px; }
+.s-tbl td { padding: 5px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+.s-tbl .s-ck { width: 30px; text-align: center; padding-top: 13px; }
+.s-tbl input[type=checkbox], .s-check input { width: 17px; height: 17px; accent-color: var(--blue); cursor: pointer; }
+.s-tbl .s-end { text-align: right; white-space: nowrap; }
+.s-link { border: 0; background: none; padding: 7px 0 0; cursor: pointer; font-size: 15px; font-weight: 500; text-align: left; }
+.s-link:hover { color: #7cc8fa; text-decoration: underline; }
+.s-note { font-size: 12.5px; margin-top: 3px; }
+.s-extra td { border-top: 0; padding-top: 0; }
+.s-ov { display: flex; gap: 14px; flex-wrap: wrap; padding: 4px 0 8px; }
+.s-ov label { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--muted); }
+.s-ov .s-num { width: 170px; }
+.s-add { display: flex; gap: 8px; margin-top: 12px; }
+.s-bulk {
+    position: sticky; bottom: 12px; z-index: 4; display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;
+    box-shadow: 0 10px 30px rgba(0,0,0,.5); border-color: var(--blue);
+}
+.s-bulk > b { align-self: center; margin-right: 6px; }
+.s-bulk label { display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--muted); }
+.s-bulk .in { width: 150px; }
+.s-bulk .s-pair { display: flex; gap: 4px; align-items: flex-end; }
+.s-cols { display: grid; grid-template-columns: 250px 1fr; gap: 16px; align-items: start; }
+.s-sets { position: sticky; top: 104px; }
+.s-setbtn {
+    width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px;
+    padding: 9px 12px; border-radius: 10px; border: 1px solid transparent; background: transparent; cursor: pointer; text-align: left;
+}
+.s-setbtn b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.s-setbtn span { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+.s-setbtn:hover { background: rgba(255,255,255,.04); }
+.s-setbtn.on { background: rgba(46,168,245,.14); border-color: rgba(46,168,245,.45); }
+.s-cat { margin-top: 14px; }
+.s-cat-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.s-cat-head code { font-size: 12.5px; color: var(--muted); }
+.s-cat-head .s-count { margin-left: auto; font-size: 12.5px; color: var(--muted); }
+.s-sep { margin: 22px 0 0; padding-top: 14px; border-top: 1px solid var(--line); }
+.s-field { display: grid; grid-template-columns: 220px 1fr; gap: 6px 16px; align-items: center; margin-top: 12px; }
+.s-field > span { font-weight: 500; }
+.s-field .s-hint { grid-column: 2; margin: 0; }
+.s-modal {
+    position: fixed; inset: 0; z-index: 20; background: rgba(5,9,14,.72);
+    display: grid; place-items: center; padding: 20px; overflow-y: auto;
+}
+.s-dialog {
+    width: 100%; max-width: 640px; background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+    padding: 22px 24px; box-shadow: 0 18px 50px rgba(0,0,0,.5);
+}
+.s-dialog h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; }
+.s-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.s-files { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.s-file { padding: 9px 12px; background: var(--raised); border-radius: 10px; font-size: 14px; }
+.s-check { display: flex; gap: 10px; align-items: flex-start; margin-top: 10px; cursor: pointer; font-size: 14.5px; }
+.s-check small { display: block; color: var(--muted); font-size: 13px; }
+.s-list { margin: 8px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }
+.s-hist { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+.s-hist td { padding: 7px 6px; border-top: 1px solid var(--line); }
+.s-drop { margin-top: 14px; display: block; padding: 18px; border: 2px dashed var(--line); border-radius: 14px; text-align: center; cursor: pointer; color: var(--soft); }
+.s-drop:hover { border-color: var(--blue); }
+.s-drop input { display: none; }
+details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 12px; }
+
+@media (max-width: 860px) {
+    .s-cols { grid-template-columns: 1fr; }
+    .s-sets { position: static; }
+    .s-field { grid-template-columns: 1fr; }
+    .s-field .s-hint { grid-column: 1; }
+}
+
 @media (max-width: 640px) {
     .toolbar { position: static; }   /* two full-width rows would cover half a phone screen */
     .groups button { height: 46px; font-size: 17px; }
@@ -268,6 +395,10 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
             </div>
             <div class="right">
                 <div class="stats" id="stats"></div>
+                <div class="nav" id="nav">
+                    <button type="button" class="on" data-view="inv">Inventory</button>
+                    <button type="button" data-view="set">Settings</button>
+                </div>
                 <button class="lock" id="lockBtn" type="button" title="Hide everything and ask for the password again">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
                     Lock
@@ -276,7 +407,7 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
         </div>
     </header>
 
-    <div class="wrap">
+    <div class="wrap" id="invView">
         <section class="toolbar">
             <div class="groups" id="groups" role="group" aria-label="Group"></div>
             <label class="search">
@@ -287,6 +418,24 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
 
         <main id="accounts"></main>
     </div>
+
+    <!-- Settings: what each PC's settings.lua used to hold. script.lua loads it from the Worker. -->
+    <div class="wrap" id="setView" hidden>
+        <section class="toolbar">
+            <div class="groups" id="setTabs" role="group" aria-label="Settings section"></div>
+            <div class="savebar">
+                <span class="s-state" id="setState"></span>
+                <button class="btn" type="button" data-act="import">Import settings.lua</button>
+                <button class="btn" type="button" data-act="history">History</button>
+                <button class="btn" type="button" data-act="discard" id="setDiscard">Discard</button>
+                <button class="btn primary" type="button" data-act="save" id="setSave">Save</button>
+            </div>
+        </section>
+        <div id="setMsg"></div>
+        <main id="setBody"></main>
+    </div>
+
+    <div class="s-modal" id="modal" hidden><div class="s-dialog" id="dialog" role="dialog" aria-modal="true"></div></div>
 </div>
 
 <script>
@@ -388,6 +537,7 @@ function lock(reason) {
     clearInterval(refreshTimer);
     ACCOUNTS = []; GROUPS = [];
     state.open.clear();
+    resetSettings();
     for (const id of ["stats", "groups", "accounts", "status"]) $(id).innerHTML = "";
     $("app").hidden = true;
     $("gate").hidden = false;
@@ -547,7 +697,10 @@ function renderAccounts() {
 function render() { renderStats(); renderGroups(); renderAccounts(); }
 
 // ── wiring ───────────────────────────────────────────────────────────────────
-$("lockBtn").addEventListener("click", () => lock());
+$("lockBtn").addEventListener("click", () => {
+    if (settingsDirty() && !confirm("You have settings changes that aren't saved. Lock anyway and lose them?")) return;
+    lock();
+});
 $("q").addEventListener("input", e => { state.q = e.target.value; renderAccounts(); });
 document.addEventListener("click", e => {
     if (!password) return;
@@ -587,6 +740,1233 @@ if (!/^https?:\/\//.test(API)) {
     $("pw").disabled = $("go").disabled = true;
     showMsg("Not connected yet: put your Worker address in API_URL near the top of the script in index.html.", true);
 }
+</script>
+
+<script>
+// ══ Settings page ═══════════════════════════════════════════════════════════
+// Edits what settings.lua used to hold. Nothing goes to the Worker until Save;
+// every running script.lua picks up a saved version within 5 minutes.
+
+// Without these the script has nothing to say at that point of a trade, so Default must fill them.
+const REQUIRED_CATS = ["trade_open", "good", "value_question", "built_replies", "traded_replies", "inv_access_denied",
+    "no_match_found", "portal_replies", "bot_denial_replies", "other_house_replies", "there_replies"];
+// Left empty, the script falls back to lines of its own.
+const OPTIONAL_CATS = ["greetings", "real_check", "cant_add", "cant_afford", "compliment_reply", "offer_empty",
+    "offer_question", "under_offer_close", "under_offer_low", "values_source"];
+const CAT_INFO = {
+    trade_open:          ["Trade opens", "Sent one after another when a trade opens. <code>%s</code> becomes the value from the advert, e.g. 15+. A first line of just \"heyyy\" gets swapped for a random greeting."],
+    good:                ["Good offer", "Said when the offer is enough and it accepts."],
+    value_question:      ["\"What are you looking for?\"", "<code>%s</code> becomes e.g. \"15+ elve value\"."],
+    built_replies:       ["\"Did you build it?\"", ""],
+    traded_replies:      ["\"It's cloned / duped / copied\"", ""],
+    inv_access_denied:   ["Inventory access denied", "Said when they don't let it look at their inventory."],
+    no_match_found:      ["Nothing suitable", "Said when nothing in their inventory adds up to the price."],
+    portal_replies:      ["Asks to trade the door", "When they ask for the portal / door instead."],
+    bot_denial_replies:  ["\"Are you a bot?\"", ""],
+    other_house_replies: ["Asks for another house", ""],
+    there_replies:       ["\"Hello? Are you there?\"", ""],
+    greetings:           ["Greetings", "Swapped in for a bare \"heyyy\" at the start of Trade opens."],
+    real_check:          ["\"Are you real?\"", ""],
+    cant_add:            ["\"Can you add?\"", "When they ask it to add something on its side."],
+    cant_afford:         ["\"I don't have more\"", "Said before it declines an offer that stays under."],
+    compliment_reply:    ["Compliments", "\"its so cute\", \"nice house\"…"],
+    offer_empty:         ["Empty offer", "They accepted with nothing in the trade."],
+    offer_question:      ["\"What do you want?\" (empty trade)", ""],
+    under_offer_close:   ["Offer a bit under", "Their offer is close to the price."],
+    under_offer_low:     ["Offer far under", ""],
+    values_source:       ["\"Do you use elve?\"", ""],
+};
+const DEFAULT_KEYS = ["suggestion_range_offset", "trade_message_delay", "dont_trade_for_more_than"];
+const DEFAULT_INFO = {
+    suggestion_range_offset:  ["Suggestion range", "When it suggests a pet from their inventory, it looks for one worth between the price and the price plus this."],
+    trade_message_delay:      ["Message delay (s)", "Seconds between the lines of Trade opens."],
+    dont_trade_for_more_than: ["Don't trade above", "Kept for older script versions; the current script doesn't use it."],
+};
+const WEBHOOKS = [
+    ["no_houses", "No houses left", "Pinged when an account has no house to trade."],
+    ["success",   "Successful trades", ""],
+    ["failed",    "Failed trades", ""],
+    ["chat_log",  "Chat logs", ""],
+];
+const TABS = [["accounts", "Accounts"], ["messages", "Messages"], ["adverts", "Adverts"], ["positions", "Positions"], ["general", "General"]];
+const RE_GROUP = /^[A-Za-z0-9_]{1,40}$/, RE_ACCOUNT = /^[A-Za-z0-9_]{3,20}$/,
+      RE_HOUSE = /^[A-Za-z0-9_ -]{1,60}$/, RE_SET = /^[A-Za-z0-9_ -]{1,40}$/;
+
+const S = {
+    view: "inv", loaded: false, busy: false, version: 0, savedAt: 0, doc: null, base: "", history: [],
+    tab: "accounts", set: "Default", q: "", sel: new Set(), open: new Set(), posText: null, posErr: "", msg: null,
+};
+let IMP = null;   // import dialog state
+
+const isObj = v => v !== null && typeof v === "object" && !Array.isArray(v);
+const clone = v => JSON.parse(JSON.stringify(v));
+const ci = (a, b) => String(a).localeCompare(String(b), undefined, { sensitivity: "base", numeric: true });
+const plural = (n, w) => `${n} ${n === 1 ? w : /[^aeiou]y$/.test(w) ? w.slice(0, -1) + "ies" : w + "s"}`;
+const toLines = text => text.split("\n").map(s => s.trim()).filter(Boolean);
+const blankWebhooks = () => Object.fromEntries(WEBHOOKS.map(([k]) => [k, ""]));
+const blankDoc = () => ({
+    defaults: { suggestion_range_offset: 3, trade_message_delay: 3, dont_trade_for_more_than: 120 },
+    message_sets: { Default: {} }, house_adverts: {}, saved_positions: [], groups: {},
+});
+
+// Fills in anything missing so the editor never has to check.
+function normalize(doc) {
+    const blank = blankDoc();
+    for (const k of Object.keys(blank)) if (doc[k] === undefined || doc[k] === null) doc[k] = blank[k];
+    for (const k of DEFAULT_KEYS) if (doc.defaults[k] === undefined) doc.defaults[k] = blank.defaults[k];
+    if (!doc.message_sets.Default) doc.message_sets = { Default: {}, ...doc.message_sets };
+    for (const grp of Object.values(doc.groups)) {
+        grp.webhooks = { ...blankWebhooks(), ...(grp.webhooks || {}) };
+        grp.accounts = grp.accounts || {};
+        for (const a of Object.values(grp.accounts)) {
+            a.overrides = a.overrides || {};
+            a.message_set = a.message_set || "Default";
+            if (a.house === undefined) a.house = "";
+        }
+    }
+    return doc;
+}
+
+function settingsDirty() { return !!S.doc && (JSON.stringify(S.doc) !== S.base || !!S.posErr); }
+
+function resetSettings() {
+    Object.assign(S, { loaded: false, busy: false, version: 0, savedAt: 0, doc: null, base: "", history: [],
+        q: "", posText: null, posErr: "", msg: null });
+    S.sel.clear(); S.open.clear();
+    IMP = null;
+    closeModal();
+    for (const id of ["setTabs", "setMsg", "setBody", "setState"]) $(id).innerHTML = "";
+    showView("inv");
+}
+
+window.addEventListener("beforeunload", e => { if (password && settingsDirty()) { e.preventDefault(); e.returnValue = ""; } });
+
+// ── talking to the Worker ────────────────────────────────────────────────────
+async function post(path, extra) {
+    let res;
+    try {
+        res = await fetch(API + path, {
+            method: "POST", headers: { "Content-Type": "application/json" }, cache: "no-store",
+            body: JSON.stringify({ password, ...extra }),
+        });
+    } catch {
+        return { kind: "offline" };
+    }
+    let body = null;
+    try { body = await res.json(); } catch {}
+    if (res.ok && body) return { kind: "ok", body };
+    if (res.status === 401) return { kind: "wrong" };
+    if (res.status === 409) return { kind: "conflict", body: body || {} };
+    if (res.status === 429) return { kind: "locked", retryAfter: (body && body.retryAfter) || 900 };
+    return { kind: "error", detail: (body && body.error) || `HTTP ${res.status}` };
+}
+const failText = r => r.kind === "offline" ? "can't reach the dashboard server"
+    : r.kind === "locked" ? `locked out for ${waitWords(r.retryAfter)}` : r.detail;
+
+// ── switching pages ──────────────────────────────────────────────────────────
+function showView(v) {
+    S.view = v;
+    $("nav").querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.view === v));
+    $("invView").hidden = v !== "inv";
+    $("stats").hidden = v !== "inv";
+    $("setView").hidden = v !== "set";
+    if (v !== "set") return;
+    if (!S.loaded) loadSettings(); else renderSettings();
+}
+$("nav").addEventListener("click", e => {
+    const b = e.target.closest("[data-view]");
+    if (b && password) showView(b.dataset.view);
+});
+
+async function loadSettings() {
+    if (S.busy) return;
+    S.busy = true;
+    $("setSave").disabled = $("setDiscard").disabled = true;
+    $("setBody").innerHTML = `<div class="empty">Loading settings…</div>`;
+    const mine = session;
+    const r = await post("/api/settings/load");
+    if (mine !== session) return;
+    S.busy = false;
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    if (r.kind !== "ok") {
+        $("setBody").innerHTML = `<div class="card empty">Couldn't load the settings: ${esc(failText(r))}.<br><br>
+            <button class="btn" data-act="reload">Try again</button></div>`;
+        return;
+    }
+    adopt(r.body);
+}
+
+function adopt(body) {
+    S.loaded = true;
+    S.version = body.version || 0;
+    S.savedAt = body.savedAt || 0;
+    if (body.history) S.history = body.history;
+    S.doc = normalize(body.doc ? body.doc : blankDoc());
+    S.base = JSON.stringify(S.doc);
+    S.posText = null; S.posErr = "";
+    S.sel.clear();
+    if (!S.doc.message_sets[S.set]) S.set = "Default";
+    if (!S.version) {
+        S.msg = { kind: "info", html: `Nothing is saved here yet. Press <b>Import settings.lua</b> and pick the settings.lua
+            from each PC (one at a time or all together), check the result, then press <b>Save</b>.` };
+    }
+    renderSettings();
+}
+
+// ── looking things up in the doc ─────────────────────────────────────────────
+function findAcct(name, doc = S.doc) {
+    const low = name.toLowerCase();
+    for (const [g, grp] of Object.entries(doc.groups)) {
+        for (const n of Object.keys(grp.accounts)) if (n.toLowerCase() === low) return { g, name: n, a: grp.accounts[n] };
+    }
+    return null;
+}
+function allAccounts() {
+    const out = [];
+    for (const [g, grp] of Object.entries(S.doc.groups)) for (const [name, a] of Object.entries(grp.accounts)) out.push({ g, name, a });
+    return out;
+}
+const setNames = () => ["Default", ...Object.keys(S.doc.message_sets).filter(s => s !== "Default").sort(ci)];
+function houseNames() {
+    const s = new Set(Object.keys(S.doc.house_adverts));
+    for (const { a } of allAccounts()) if (a.house.trim()) s.add(a.house.trim());
+    return [...s].sort(ci);
+}
+function usage(field) {          // field value -> [account names]
+    const m = {};
+    for (const { name, a } of allAccounts()) (m[a[field].trim ? a[field].trim() : a[field]] ??= []).push(name);
+    return m;
+}
+function nameList(names, max = 12) {
+    if (!names || !names.length) return "no accounts";
+    const sorted = [...names].sort(ci);
+    return esc(sorted.slice(0, max).join(", ")) + (sorted.length > max ? ` and ${sorted.length - max} more` : "");
+}
+// Rebuilds an object with one key renamed, keeping the order.
+function renameKey(obj, from, to) {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) out[k === from ? to : k] = v;
+    return out;
+}
+
+// ── rendering ────────────────────────────────────────────────────────────────
+function renderSaveState() {
+    const dirty = settingsDirty();
+    const el = $("setState");
+    el.className = "s-state" + (dirty ? " dirty" : "");
+    el.textContent = !S.loaded ? "" : dirty ? "Unsaved changes"
+        : S.version ? `Version ${S.version} · saved ${exact(S.savedAt)}` : "Nothing saved yet";
+    $("setSave").disabled = !dirty || S.busy;
+    $("setDiscard").disabled = !dirty || S.busy;
+}
+
+function renderMsg() {
+    const m = S.msg;
+    $("setMsg").innerHTML = m ? `<div class="s-msg ${m.kind}">${m.html}</div>` : "";
+}
+function say(kind, html) { S.msg = { kind, html }; renderMsg(); }
+
+function renderSettings() {
+    if (!S.loaded) return;
+    $("setTabs").innerHTML = TABS.map(([k, label]) =>
+        `<button type="button" class="${S.tab === k ? "on" : ""}" data-tab="${k}" aria-pressed="${S.tab === k}">${label}</button>`).join("");
+    renderSaveState();
+    renderMsg();
+    const tabs = { accounts: accountsTab, messages: messagesTab, adverts: advertsTab, positions: positionsTab, general: generalTab };
+    $("setBody").innerHTML = tabs[S.tab]();
+}
+
+// Accounts ────────────────────────────────────────────────────────────────────
+function accountsTab() {
+    const q = S.q.trim().toLowerCase();
+    const sets = setNames();
+    const groups = Object.keys(S.doc.groups);
+    let html = `<div class="card"><div class="s-row">
+        <label class="search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8193a8" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="sq" type="search" placeholder="Search accounts or houses" autocomplete="off" spellcheck="false" value="${esc(S.q)}">
+        </label>
+        <button class="btn" data-act="addGroup">+ Add group</button>
+    </div>
+    <p class="s-hint">Each account trades the house written next to it and says the lines of its message set.
+        <b>More</b> lets one account use its own numbers from the General tab. A group is one set of Discord webhooks (General tab).</p></div>`;
+
+    if (!groups.length) {
+        html += `<div class="card empty">No accounts yet. Press <b>Import settings.lua</b> at the top, or add a group.</div>`;
+    }
+    for (const g of groups) {
+        const grp = S.doc.groups[g];
+        const total = Object.keys(grp.accounts).length;
+        const rows = Object.entries(grp.accounts)
+            .filter(([n, a]) => !q || n.toLowerCase().includes(q) || a.house.toLowerCase().includes(q))
+            .sort(([n1, a1], [n2, a2]) => ci(a1.house, a2.house) || ci(n1, n2));
+        if (q && !rows.length) continue;
+        const allOn = rows.length > 0 && rows.every(([n]) => S.sel.has(n));
+        html += `<section class="card" data-g="${esc(g)}">
+            <h2>${esc(g)} <span class="s-pill">${plural(total, "account")}</span>
+                <span class="s-tools">
+                    <button class="btn small" data-act="renameGroup">Rename</button>
+                    <button class="btn small danger" data-act="deleteGroup">Delete group</button>
+                </span></h2>
+            ${rows.length ? `<div class="s-scroll"><table class="s-tbl">
+                <thead><tr><th class="s-ck"><input type="checkbox" data-act="selAll" ${allOn ? "checked" : ""} title="Select all"></th>
+                    <th>Account</th><th>House</th><th>Min accept</th><th>Message set</th><th></th></tr></thead>
+                <tbody>${rows.map(([n, a]) => acctRow(n, a, sets)).join("")}</tbody>
+            </table></div>` : `<p class="s-hint">No accounts in this group yet.</p>`}
+            <div class="s-add">
+                <input class="in" data-addnames placeholder="Add accounts: type one or more usernames (spaces or commas between)">
+                <button class="btn" data-act="addAccounts">Add</button>
+            </div>
+        </section>`;
+    }
+    if (S.sel.size) html += bulkBar(sets, groups);
+    html += `<datalist id="houseList">${houseNames().map(h => `<option value="${esc(h)}">`).join("")}</datalist>`;
+    return html;
+}
+
+function acctRow(n, a, sets) {
+    const ov = Object.keys(a.overrides).length;
+    const house = a.house.trim();
+    const note = !house ? `<div class="s-note s-bad">Needs a house</div>`
+        : !S.doc.house_adverts[house] ? `<div class="s-note s-warn">No adverts for this house yet</div>` : "";
+    let html = `<tr data-a="${esc(n)}">
+        <td class="s-ck"><input type="checkbox" data-act="sel" ${S.sel.has(n) ? "checked" : ""}></td>
+        <td><button class="s-link" data-act="renameAcct" title="Rename">${esc(n)}</button></td>
+        <td><input class="in" list="houseList" data-f="house" value="${esc(a.house)}" spellcheck="false">${note}</td>
+        <td><input class="in s-num" type="number" min="0" step="any" data-f="min_accept" value="${esc(a.min_accept)}"></td>
+        <td><select class="in" data-f="message_set">${sets.map(s =>
+            `<option value="${esc(s)}" ${s === a.message_set ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></td>
+        <td class="s-end">
+            <button class="btn small" data-act="toggleMore" title="Numbers for this account only">${ov ? `More (${ov})` : "More"}</button>
+            <button class="btn small danger" data-act="deleteAcct" title="Delete account">✕</button>
+        </td></tr>`;
+    if (S.open.has(n)) {
+        html += `<tr class="s-extra" data-a="${esc(n)}"><td></td><td colspan="5"><div class="s-ov">${DEFAULT_KEYS.map(k =>
+            `<label>${DEFAULT_INFO[k][0]}<input class="in s-num" type="number" min="0" step="any" data-f="ov.${k}"
+                value="${esc(a.overrides[k] ?? "")}" placeholder="${esc(S.doc.defaults[k])} (General)"></label>`).join("")}</div>
+            <p class="s-hint" style="margin:0 0 6px">Empty = use the number from the General tab.</p></td></tr>`;
+    }
+    return html;
+}
+
+function bulkBar(sets, groups) {
+    const opts = list => list.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
+    return `<div class="card s-bulk">
+        <b>${S.sel.size} selected</b>
+        <span class="s-pair"><label>House<input class="in" id="bkHouse" list="houseList"></label><button class="btn small" data-act="bulk" data-k="house">Set</button></span>
+        <span class="s-pair"><label>Min accept<input class="in" id="bkMin" type="number" min="0" step="any"></label><button class="btn small" data-act="bulk" data-k="min">Set</button></span>
+        <span class="s-pair"><label>Message set<select class="in" id="bkSet">${opts(sets)}</select></label><button class="btn small" data-act="bulk" data-k="set">Set</button></span>
+        <span class="s-pair"><label>Group<select class="in" id="bkGroup">${opts(groups)}</select></label><button class="btn small" data-act="bulk" data-k="move">Move</button></span>
+        <button class="btn small danger" data-act="bulk" data-k="delete">Delete</button>
+        <button class="btn small" data-act="bulk" data-k="clear">Clear selection</button>
+    </div>`;
+}
+
+// Messages ────────────────────────────────────────────────────────────────────
+function messagesTab() {
+    if (!S.doc.message_sets[S.set]) S.set = "Default";
+    const used = usage("message_set");
+    const isDef = S.set === "Default";
+    const set = S.doc.message_sets[S.set];
+    const def = S.doc.message_sets.Default;
+    const known = new Set([...REQUIRED_CATS, ...OPTIONAL_CATS]);
+    const extra = [...new Set(Object.values(S.doc.message_sets).flatMap(Object.keys))].filter(c => !known.has(c));
+
+    const list = setNames().map(s => `<button class="s-setbtn ${s === S.set ? "on" : ""}" data-act="pickSet" data-set="${esc(s)}">
+        <b>${esc(s)}</b><span>${plural((used[s] || []).length, "account")}</span></button>`).join("");
+
+    const catCard = (cat, required) => {
+        const lines = set[cat] || [];
+        const [title, help] = CAT_INFO[cat] || [cat, "Not used by the current script."];
+        let placeholder = "One message per line";
+        let state = "";
+        if (!isDef && !lines.length) {
+            const d = def[cat] || [];
+            placeholder = d.length ? `Empty: uses Default's ${d.length} line${d.length === 1 ? "" : "s"}:\n` + d.slice(0, 6).join("\n") + (d.length > 6 ? "\n…" : "")
+                : "Empty: uses Default's (also empty)";
+            state = `<button class="btn small" data-act="copyDef" data-cat="${cat}">Copy Default's lines</button>`;
+        } else if (isDef && !lines.length) {
+            state = required ? `<span class="s-bad">Needs at least one line</span>` : `<span>Empty = the script's own lines</span>`;
+        }
+        return `<div class="s-cat">
+            <div class="s-cat-head"><h3>${esc(title)}</h3><code>${esc(cat)}</code>
+                <span class="s-count" data-count="${esc(cat)}">${lines.length ? plural(lines.length, "line") : ""}</span>${state}</div>
+            ${help ? `<p class="s-hint" style="margin:0 0 6px">${help}</p>` : ""}
+            <textarea class="ta" data-cat="${esc(cat)}" rows="${Math.min(14, Math.max(3, lines.length + 1))}" spellcheck="false"
+                placeholder="${esc(placeholder)}">${esc(lines.join("\n"))}</textarea></div>`;
+    };
+
+    return `<div class="s-cols">
+        <div class="card s-sets"><h3>Message sets</h3>
+            <p class="s-hint">Pick an account's set on the Accounts tab.</p>
+            ${list}
+            <button class="btn" style="width:100%;margin-top:12px" data-act="newSet">+ New set</button>
+        </div>
+        <div class="card">
+            <h2>${esc(S.set)} <span class="s-tools">
+                ${isDef ? "" : `<button class="btn small" data-act="renameSet">Rename</button>`}
+                <button class="btn small" data-act="dupSet">Duplicate</button>
+                ${isDef ? "" : `<button class="btn small danger" data-act="deleteSet">Delete</button>`}
+            </span></h2>
+            <p class="s-hint">${isDef
+                ? "Every account says these unless its set changes a category. One message per line; the script picks one at random."
+                : "Fill only the categories this set should change; empty ones use Default's lines. One message per line."}
+                <br>Used by: ${nameList(used[S.set])}</p>
+            ${REQUIRED_CATS.map(c => catCard(c, true)).join("")}
+            <div class="s-sep"><h3>Optional</h3><p class="s-hint">Rarer moments. Left empty in Default, the script uses lines of its own.</p></div>
+            ${OPTIONAL_CATS.map(c => catCard(c, false)).join("")}
+            ${extra.length ? `<div class="s-sep"><h3>Other</h3><p class="s-hint">Came in from an import; the current script doesn't use them.</p></div>${extra.map(c => catCard(c, false)).join("")}` : ""}
+        </div></div>`;
+}
+
+// Adverts ─────────────────────────────────────────────────────────────────────
+function advertsTab() {
+    const used = usage("house");
+    const houses = Object.keys(S.doc.house_adverts);
+    const missing = Object.keys(used).filter(h => h && !S.doc.house_adverts[h]).sort(ci);
+    let html = `<div class="card">
+        <h2>Houses and adverts</h2>
+        <p class="s-hint">One advert per line. The script picks one per server, so every account in that server shows the same one.
+            Keep the <code>15+ elve</code> part in each line: the script reads its price from it (without it, it uses the account's min accept).</p>
+        <div class="s-add"><input class="in" id="newHouse" placeholder="New house name, e.g. Sandbox"><button class="btn" data-act="addHouse">+ Add house</button></div>
+    </div>`;
+    if (missing.length) {
+        html += `<div class="s-msg">These houses are given to accounts but have no adverts, so those accounts won't advertise:
+            ${missing.map(h => `<b>${esc(h)}</b> (${plural(used[h].length, "account")})`).join(", ")}.
+            ${missing.map(h => `<button class="btn small" data-act="addHouse" data-house="${esc(h)}">Add ${esc(h)}</button>`).join("")}</div>`;
+    }
+    for (const h of houses) {
+        const lines = S.doc.house_adverts[h];
+        html += `<section class="card" data-house="${esc(h)}">
+            <h2>${esc(h)} <span class="s-pill ${used[h] ? "" : "warn"}">${plural((used[h] || []).length, "account")}</span>
+                <span class="s-tools"><button class="btn small" data-act="renameHouse">Rename</button>
+                <button class="btn small danger" data-act="deleteHouse">Delete</button></span></h2>
+            <p class="s-hint">Used by: ${nameList(used[h])}</p>
+            <textarea class="ta" style="margin-top:10px" data-adverts rows="${Math.min(10, Math.max(2, lines.length + 1))}"
+                spellcheck="false" placeholder="One advert per line">${esc(lines.join("\n"))}</textarea>
+            <div class="s-note s-warn" data-elve>${elveWarning(lines)}</div>
+        </section>`;
+    }
+    return html;
+}
+const elveWarning = lines => {
+    const n = lines.filter(l => !/\d+\s*(\+|-\s*\d+)?\s*elve/i.test(l)).length;
+    return n ? `${plural(n, "line")} without a "15+ elve" style price.` : "";
+};
+
+// Positions ───────────────────────────────────────────────────────────────────
+const cfText = p => `CFrame.new(${p.join(", ")})`;
+function positionsTab() {
+    const text = S.posText ?? S.doc.saved_positions.map(cfText).join("\n");
+    return `<div class="card">
+        <h2>Door positions <span class="s-pill" id="posCount">${plural(S.doc.saved_positions.length, "position")}</span></h2>
+        <p class="s-hint">One <code>CFrame.new(…)</code> per line, the same as in settings.lua. The script picks one per server.</p>
+        <textarea class="ta" id="posTa" style="margin-top:10px;font-family:ui-monospace,Consolas,monospace;font-size:12.5px;white-space:pre;overflow-x:auto"
+            rows="${Math.min(20, Math.max(6, S.doc.saved_positions.length + 2))}" spellcheck="false"
+            placeholder="CFrame.new(6013.0, 10359.6, -12006.0, 0.0088, 0, -0.9999, 0, 1, 0, 0.9999, 0, 0.0088)">${esc(text)}</textarea>
+        <div class="s-note s-bad" id="posErr">${esc(S.posErr)}</div>
+    </div>`;
+}
+function parsePositions(text) {
+    const out = [];
+    const rows = text.split("\n");
+    for (let i = 0; i < rows.length; i++) {
+        const raw = rows[i].trim().replace(/,$/, "");
+        if (!raw) continue;
+        const m = /^(?:CFrame\.new\s*)?\(?([^()]*)\)?$/.exec(raw);
+        const nums = m ? m[1].split(",").map(s => s.trim()).filter(Boolean).map(Number) : [];
+        if (!m || !nums.every(Number.isFinite) || (nums.length !== 12 && nums.length !== 3)) {
+            return { err: `Line ${i + 1} isn't a CFrame.new(…) with 12 numbers.` };
+        }
+        out.push(nums.length === 3 ? [...nums, 1, 0, 0, 0, 1, 0, 0, 0, 1] : nums);
+    }
+    if (out.length > 50) return { err: "There can be at most 50 positions." };
+    return { list: out };
+}
+
+// General ─────────────────────────────────────────────────────────────────────
+function generalTab() {
+    let html = `<div class="card"><h2>Numbers</h2>
+        <p class="s-hint">For every account, unless the account sets its own under <b>More</b> on the Accounts tab.</p>
+        ${DEFAULT_KEYS.map(k => `<label class="s-field"><span>${DEFAULT_INFO[k][0]}</span>
+            <input class="in s-num" type="number" min="0" step="any" data-def="${k}" value="${esc(S.doc.defaults[k])}">
+            <p class="s-hint">${DEFAULT_INFO[k][1]}</p></label>`).join("")}
+    </div>`;
+    const groups = Object.keys(S.doc.groups);
+    for (const g of groups) {
+        const w = S.doc.groups[g].webhooks;
+        html += `<div class="card" data-g="${esc(g)}"><h2>Webhooks: ${esc(g)}</h2>
+            <p class="s-hint">Discord webhook links for this group's accounts. Leave empty to send nothing.</p>
+            ${WEBHOOKS.map(([k, label, help]) => `<label class="s-field"><span>${label}</span>
+                <input class="in" type="url" data-wh="${k}" value="${esc(w[k])}" placeholder="https://discord.com/api/webhooks/…" spellcheck="false" autocomplete="off">
+                ${help ? `<p class="s-hint">${help}</p>` : ""}</label>`).join("")}
+        </div>`;
+    }
+    if (!groups.length) html += `<div class="card empty">Webhooks are set per group. Add a group on the Accounts tab first.</div>`;
+    return html;
+}
+
+// ── editing ──────────────────────────────────────────────────────────────────
+function changed() { renderSaveState(); }
+
+$("setBody").addEventListener("input", e => {
+    const t = e.target;
+    if (t.type === "checkbox") return;
+    if (t.id === "sq") {
+        S.q = t.value;
+        const at = t.selectionStart;
+        renderSettings();
+        const q = $("sq"); q.focus(); q.setSelectionRange(at, at);
+        return;
+    }
+    const tr = t.closest("tr[data-a]");
+    if (tr && t.dataset.f) {
+        const found = findAcct(tr.dataset.a);
+        if (!found) return;
+        const a = found.a, f = t.dataset.f, v = t.value;
+        if (f === "house") a.house = v;
+        else if (f === "min_accept") a.min_accept = v === "" ? "" : Number(v);
+        else if (f === "message_set") a.message_set = v;
+        else if (f.startsWith("ov.")) {
+            const k = f.slice(3);
+            if (v === "") delete a.overrides[k]; else a.overrides[k] = Number(v);
+        }
+        return changed();
+    }
+    if (t.dataset.cat !== undefined && t.tagName === "TEXTAREA") {
+        const set = S.doc.message_sets[S.set], cat = t.dataset.cat;
+        const lines = toLines(t.value);
+        if (lines.length) set[cat] = lines; else delete set[cat];
+        const c = $("setBody").querySelector(`[data-count="${CSS.escape(cat)}"]`);
+        if (c) c.textContent = lines.length ? plural(lines.length, "line") : "";
+        return changed();
+    }
+    if (t.dataset.adverts !== undefined) {
+        const card = t.closest("[data-house]");
+        const lines = toLines(t.value);
+        S.doc.house_adverts[card.dataset.house] = lines;
+        card.querySelector("[data-elve]").textContent = elveWarning(lines);
+        return changed();
+    }
+    if (t.id === "posTa") {
+        S.posText = t.value;
+        const r = parsePositions(t.value);
+        S.posErr = r.err || "";
+        if (r.list) S.doc.saved_positions = r.list;
+        $("posErr").textContent = S.posErr;
+        $("posCount").textContent = plural(S.doc.saved_positions.length, "position");
+        return changed();
+    }
+    if (t.dataset.def) {
+        S.doc.defaults[t.dataset.def] = t.value === "" ? "" : Number(t.value);
+        return changed();
+    }
+    if (t.dataset.wh) {
+        S.doc.groups[t.closest("[data-g]").dataset.g].webhooks[t.dataset.wh] = t.value.trim();
+        return changed();
+    }
+});
+
+// The house column's "no adverts" note only refreshes after leaving the field.
+$("setBody").addEventListener("change", e => {
+    if (e.target.dataset.f === "house") {
+        const tr = e.target.closest("tr[data-a]");
+        const found = tr && findAcct(tr.dataset.a);
+        if (!found) return;
+        const td = e.target.parentElement;
+        td.querySelector(".s-note")?.remove();
+        const h = found.a.house.trim();
+        if (!h) td.insertAdjacentHTML("beforeend", `<div class="s-note s-bad">Needs a house</div>`);
+        else if (!S.doc.house_adverts[h]) td.insertAdjacentHTML("beforeend", `<div class="s-note s-warn">No adverts for this house yet</div>`);
+    }
+});
+$("setBody").addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    if (e.target.matches("[data-addnames]")) { e.preventDefault(); act("addAccounts", e.target); }
+    if (e.target.id === "newHouse") { e.preventDefault(); act("addHouse", e.target); }
+});
+
+function askName(question, current, re, rule) {
+    const v = prompt(question, current || "");
+    if (v === null) return null;
+    const name = v.trim();
+    if (!re.test(name)) { alert(`"${name}" won't work: ${rule}`); return null; }
+    return name;
+}
+
+const ACTIONS = {
+    // save bar
+    save: () => save(),
+    forceSave: el => save(Number(el.dataset.v)),
+    discard: () => {
+        if (!confirm("Throw away all changes since the last save?")) return;
+        S.doc = JSON.parse(S.base); S.posText = null; S.posErr = ""; S.msg = null;
+        renderSettings();
+    },
+    reload: () => {
+        if (settingsDirty() && !confirm("Load the saved settings and lose your changes here?")) return;
+        S.msg = null; S.loaded = true;
+        loadSettings();
+    },
+    import: () => openImport(),
+    history: () => openHistory(),
+
+    // accounts
+    addGroup: () => {
+        const g = askName("Name of the new group (letters, numbers and _):", "", RE_GROUP, "use only letters, numbers and _.");
+        if (!g) return;
+        if (Object.keys(S.doc.groups).some(x => x.toLowerCase() === g.toLowerCase())) return alert(`There's already a group called ${g}.`);
+        S.doc.groups[g] = { webhooks: blankWebhooks(), accounts: {} };
+        changed(); renderSettings();
+    },
+    renameGroup: el => {
+        const g = el.closest("[data-g]").dataset.g;
+        const to = askName(`New name for the group "${g}":`, g, RE_GROUP, "use only letters, numbers and _.");
+        if (!to || to === g) return;
+        if (S.doc.groups[to]) return alert(`There's already a group called ${to}.`);
+        S.doc.groups = renameKey(S.doc.groups, g, to);
+        changed(); renderSettings();
+    },
+    deleteGroup: el => {
+        const g = el.closest("[data-g]").dataset.g;
+        const n = Object.keys(S.doc.groups[g].accounts).length;
+        if (!confirm(n ? `Delete the group "${g}" and its ${plural(n, "account")}?` : `Delete the group "${g}"?`)) return;
+        for (const name of Object.keys(S.doc.groups[g].accounts)) S.sel.delete(name);
+        delete S.doc.groups[g];
+        changed(); renderSettings();
+    },
+    addAccounts: el => {
+        const card = el.closest("[data-g]");
+        const g = card.dataset.g;
+        const input = card.querySelector("[data-addnames]");
+        const names = input.value.split(/[\s,;]+/).filter(Boolean);
+        if (!names.length) return input.focus();
+        const accts = Object.values(S.doc.groups[g].accounts);
+        // New accounts start like the group's most common setup; change what differs.
+        const common = key => {
+            const count = new Map();
+            for (const a of accts) count.set(a[key], (count.get(a[key]) || 0) + 1);
+            return [...count].sort((x, y) => y[1] - x[1])[0]?.[0];
+        };
+        const bad = [], dup = [];
+        for (const n of names) {
+            if (!RE_ACCOUNT.test(n)) { bad.push(n); continue; }
+            const had = findAcct(n);
+            if (had) { dup.push(`${n} (in ${had.g})`); continue; }
+            S.doc.groups[g].accounts[n] = { house: common("house") || "", min_accept: common("min_accept") ?? 0, message_set: "Default", overrides: {} };
+        }
+        input.value = "";
+        S.msg = bad.length || dup.length ? { kind: "bad", html:
+            (bad.length ? `Not Roblox usernames: ${esc(bad.join(", "))}. ` : "") +
+            (dup.length ? `Already added: ${esc(dup.join(", "))}.` : "") } : null;
+        changed(); renderSettings();
+    },
+    renameAcct: el => {
+        const n = el.closest("[data-a]").dataset.a;
+        const found = findAcct(n);
+        const to = askName(`New username for ${n}:`, n, RE_ACCOUNT, "Roblox usernames are 3-20 letters, numbers or _.");
+        if (!to || to === n) return;
+        const other = findAcct(to);
+        if (other && other.name !== n) return alert(`${to} is already in ${other.g}.`);
+        S.doc.groups[found.g].accounts = renameKey(S.doc.groups[found.g].accounts, n, to);
+        if (S.sel.delete(n)) S.sel.add(to);
+        if (S.open.delete(n)) S.open.add(to);
+        changed(); renderSettings();
+    },
+    deleteAcct: el => {
+        const n = el.closest("[data-a]").dataset.a;
+        if (!confirm(`Delete ${n}? It goes back to its PC's settings.lua until it's added here again.`)) return;
+        const found = findAcct(n);
+        delete S.doc.groups[found.g].accounts[found.name];
+        S.sel.delete(n); S.open.delete(n);
+        changed(); renderSettings();
+    },
+    toggleMore: el => {
+        const n = el.closest("[data-a]").dataset.a;
+        S.open.has(n) ? S.open.delete(n) : S.open.add(n);
+        renderSettings();
+    },
+    sel: el => {
+        const n = el.closest("[data-a]").dataset.a;
+        el.checked ? S.sel.add(n) : S.sel.delete(n);
+        renderSettings();
+    },
+    selAll: el => {
+        el.closest("[data-g]").querySelectorAll("tbody tr[data-a]:not(.s-extra)").forEach(tr => {
+            el.checked ? S.sel.add(tr.dataset.a) : S.sel.delete(tr.dataset.a);
+        });
+        renderSettings();
+    },
+    bulk: el => {
+        const k = el.dataset.k;
+        const picked = [...S.sel].map(n => findAcct(n)).filter(Boolean);
+        if (k === "clear") { S.sel.clear(); return renderSettings(); }
+        if (k === "house") {
+            const h = $("bkHouse").value.trim();
+            if (!RE_HOUSE.test(h)) return alert("Type a house name first.");
+            picked.forEach(f => { f.a.house = h; });
+        } else if (k === "min") {
+            const v = $("bkMin").value;
+            if (v === "" || !(Number(v) >= 0)) return alert("Type a min accept value first.");
+            picked.forEach(f => { f.a.min_accept = Number(v); });
+        } else if (k === "set") {
+            picked.forEach(f => { f.a.message_set = $("bkSet").value; });
+        } else if (k === "move") {
+            const to = $("bkGroup").value;
+            for (const f of picked) {
+                if (f.g === to) continue;
+                delete S.doc.groups[f.g].accounts[f.name];
+                S.doc.groups[to].accounts[f.name] = f.a;
+            }
+        } else if (k === "delete") {
+            if (!confirm(`Delete ${plural(picked.length, "account")}?`)) return;
+            for (const f of picked) delete S.doc.groups[f.g].accounts[f.name];
+            S.sel.clear();
+        }
+        changed(); renderSettings();
+    },
+
+    // messages
+    pickSet: el => { S.set = el.dataset.set; renderSettings(); window.scrollTo({ top: 0 }); },
+    newSet: () => {
+        const name = askName("Name of the new message set:", "", RE_SET, "use letters, numbers, spaces, _ or -.");
+        if (!name) return;
+        if (Object.keys(S.doc.message_sets).some(s => s.toLowerCase() === name.toLowerCase())) return alert(`There's already a set called ${name}.`);
+        S.doc.message_sets[name] = {};
+        S.set = name;
+        changed(); renderSettings();
+    },
+    dupSet: () => {
+        const name = askName(`Name for the copy of "${S.set}":`, `${S.set} copy`, RE_SET, "use letters, numbers, spaces, _ or -.");
+        if (!name) return;
+        if (Object.keys(S.doc.message_sets).some(s => s.toLowerCase() === name.toLowerCase())) return alert(`There's already a set called ${name}.`);
+        S.doc.message_sets[name] = clone(S.doc.message_sets[S.set]);
+        S.set = name;
+        changed(); renderSettings();
+    },
+    renameSet: () => {
+        const from = S.set;
+        const to = askName(`New name for "${from}":`, from, RE_SET, "use letters, numbers, spaces, _ or -.");
+        if (!to || to === from) return;
+        if (to.toLowerCase() === "default" || (S.doc.message_sets[to] && to !== from)) return alert(`There's already a set called ${to}.`);
+        S.doc.message_sets = renameKey(S.doc.message_sets, from, to);
+        for (const { a } of allAccounts()) if (a.message_set === from) a.message_set = to;
+        S.set = to;
+        changed(); renderSettings();
+    },
+    deleteSet: () => {
+        const users = usage("message_set")[S.set] || [];
+        if (!confirm(`Delete the set "${S.set}"?` + (users.length ? ` Its ${plural(users.length, "account")} will use Default.` : ""))) return;
+        for (const { a } of allAccounts()) if (a.message_set === S.set) a.message_set = "Default";
+        delete S.doc.message_sets[S.set];
+        S.set = "Default";
+        changed(); renderSettings();
+    },
+    copyDef: el => {
+        const cat = el.dataset.cat;
+        const d = S.doc.message_sets.Default[cat];
+        if (!d || !d.length) return;
+        S.doc.message_sets[S.set][cat] = clone(d);
+        changed(); renderSettings();
+    },
+
+    // adverts
+    addHouse: el => {
+        const h = (el.dataset.house || $("newHouse").value).trim();
+        if (!RE_HOUSE.test(h)) return alert("House names can use letters, numbers, spaces, _ and -.");
+        if (Object.keys(S.doc.house_adverts).some(x => x.toLowerCase() === h.toLowerCase())) return alert(`${h} is already there.`);
+        S.doc.house_adverts[h] = [];
+        changed(); renderSettings();
+        $("setBody").querySelector(`[data-house="${CSS.escape(h)}"] textarea`)?.focus();
+    },
+    renameHouse: el => {
+        const from = el.closest("[data-house]").dataset.house;
+        const users = usage("house")[from] || [];
+        const to = askName(`New name for ${from}` + (users.length ? ` (its ${plural(users.length, "account")} move with it):` : ":"),
+            from, RE_HOUSE, "use letters, numbers, spaces, _ or -.");
+        if (!to || to === from) return;
+        if (S.doc.house_adverts[to]) return alert(`${to} is already there.`);
+        S.doc.house_adverts = renameKey(S.doc.house_adverts, from, to);
+        for (const { a } of allAccounts()) if (a.house.trim() === from) a.house = to;
+        changed(); renderSettings();
+    },
+    deleteHouse: el => {
+        const h = el.closest("[data-house]").dataset.house;
+        const users = usage("house")[h] || [];
+        if (!confirm(`Delete ${h} and its adverts?` + (users.length ? ` ${plural(users.length, "account")} still trade it and will stop advertising.` : ""))) return;
+        delete S.doc.house_adverts[h];
+        changed(); renderSettings();
+    },
+};
+
+function act(name, el, e) {
+    const fn = ACTIONS[name] || IMPORT_ACTIONS[name];
+    if (fn) fn(el, e);
+}
+
+$("setView").addEventListener("click", e => {
+    if (!password) return;
+    const tab = e.target.closest("[data-tab]");
+    if (tab) { S.tab = tab.dataset.tab; return renderSettings(); }
+    const b = e.target.closest("[data-act]");
+    if (b && (S.loaded || b.dataset.act === "reload")) act(b.dataset.act, b, e);
+});
+
+// ── saving ───────────────────────────────────────────────────────────────────
+async function save(overVersion) {
+    if (S.busy) return;
+    if (S.posErr) {
+        S.tab = "positions"; renderSettings();
+        return say("bad", "Fix the positions first: " + esc(S.posErr));
+    }
+    S.busy = true;
+    $("setSave").textContent = "Saving…";
+    renderSaveState();
+    const mine = session;
+    const r = await post("/api/settings/save", { baseVersion: overVersion ?? S.version, doc: S.doc });
+    if (mine !== session) return;
+    S.busy = false;
+    $("setSave").textContent = "Save";
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    if (r.kind === "ok") {
+        adopt(r.body);
+        return say("ok", `Saved as version ${S.version}. Running accounts pick it up within 5 minutes; accounts that start now get it straight away.`);
+    }
+    renderSaveState();
+    if (r.kind === "conflict") {
+        return say("bad", `These settings were saved from somewhere else meanwhile (now version ${Number(r.body.version) || "?"}).<br>
+            <button class="btn small" data-act="reload">Load that version</button> (your changes here are lost) or
+            <button class="btn small" data-act="forceSave" data-v="${Number(r.body.version) || 0}">Save mine over it</button>`);
+    }
+    say("bad", `Not saved: ${esc(failText(r))}`);
+}
+
+// ── dialogs ──────────────────────────────────────────────────────────────────
+function openModal(html) { $("dialog").innerHTML = html; $("modal").hidden = false; }
+function closeModal() { $("modal").hidden = true; $("dialog").innerHTML = ""; IMP = null; }
+$("modal").addEventListener("click", e => {
+    if (e.target === $("modal")) return closeModal();
+    const b = e.target.closest("[data-act]");
+    if (b) act(b.dataset.act, b, e);
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("modal").hidden) closeModal(); });
+
+async function openHistory() {
+    const rows = S.history.map(h => `<tr><td><b>v${h.version}</b>${h.version === S.version ? ` <span class="s-pill">current</span>` : ""}</td>
+        <td>${esc(exact(h.savedAt))}</td><td>${esc(h.note)}</td>
+        <td style="text-align:right">${h.version === S.version ? "" : `<button class="btn small" data-act="openVersion" data-v="${h.version}">Open</button>`}</td></tr>`).join("");
+    openModal(`<h2>History</h2>
+        <p class="s-hint">The last 30 saves. <b>Open</b> puts that version in the editor; press Save to make it the current one again.</p>
+        ${rows ? `<table class="s-hist">${rows}</table>` : `<p class="s-hint">Nothing saved yet.</p>`}
+        <div class="s-foot"><button class="btn" data-act="closeModal">Close</button></div>`);
+}
+
+// ── importing settings.lua ───────────────────────────────────────────────────
+// A reader for the Lua that settings.lua is written in: tables, text, numbers,
+// true/false/nil, comments, and CFrame.new(...). It never runs anything.
+function parseLua(src) {
+    let i = 0;
+    const n = src.length;
+    const enc = new TextEncoder(), dec = new TextDecoder();
+    const NUM = /^(?:0[xX][0-9a-fA-F]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)/;
+    const NAME = /^[A-Za-z_][A-Za-z0-9_]*/;
+    const ahead = len => src.slice(i, i + len);
+    const fail = msg => { throw new Error(`${msg} (line ${src.slice(0, i).split("\n").length})`); };
+
+    function skip() {
+        while (i < n) {
+            const c = src[i];
+            if (c === " " || c === "\t" || c === "\r" || c === "\n" || c === "﻿" || c === "\f" || c === "\v") { i++; continue; }
+            if (c === "-" && src[i + 1] === "-") {
+                i += 2;
+                const m = /^\[(=*)\[/.exec(ahead(50));
+                if (m) {
+                    const close = "]" + m[1] + "]";
+                    const j = src.indexOf(close, i + m[0].length);
+                    i = j < 0 ? n : j + close.length;
+                } else {
+                    const j = src.indexOf("\n", i);
+                    i = j < 0 ? n : j + 1;
+                }
+                continue;
+            }
+            return;
+        }
+    }
+    function longString() {
+        const m = /^\[(=*)\[/.exec(ahead(50));
+        const close = "]" + m[1] + "]";
+        let start = i + m[0].length;
+        if (src[start] === "\r") start++;
+        if (src[start] === "\n") start++;
+        const j = src.indexOf(close, start);
+        if (j < 0) fail("Text started with [[ never ends");
+        i = j + close.length;
+        return src.slice(start, j);
+    }
+    function quoted() {
+        const q = src[i++];
+        const bytes = [];
+        let run = i;
+        const flush = end => { if (end > run) bytes.push(...enc.encode(src.slice(run, end))); };
+        const simple = { n: 10, t: 9, r: 13, a: 7, b: 8, f: 12, v: 11, "\\": 92, '"': 34, "'": 39, "\n": 10 };
+        while (i < n) {
+            const c = src[i];
+            if (c === q) { flush(i); i++; return dec.decode(new Uint8Array(bytes)); }
+            if (c === "\n") fail("Text is missing its closing quote");
+            if (c !== "\\") { i++; continue; }
+            flush(i);
+            i++;
+            const e = src[i++];
+            if (e in simple) bytes.push(simple[e]);
+            else if (e === "\r") { bytes.push(10); if (src[i] === "\n") i++; }
+            else if (/[0-9]/.test(e)) {
+                let d = e;
+                while (d.length < 3 && /[0-9]/.test(src[i])) d += src[i++];
+                if (+d > 255) fail("Bad \\ code in text");
+                bytes.push(+d);
+            } else if (e === "x") {
+                const h = ahead(2);
+                if (!/^[0-9a-fA-F]{2}$/.test(h)) fail("Bad \\x code in text");
+                bytes.push(parseInt(h, 16)); i += 2;
+            } else if (e === "z") {
+                while (i < n && /\s/.test(src[i])) i++;
+            } else if (e === "u") {
+                const m = /^\{([0-9a-fA-F]{1,6})\}/.exec(ahead(10));
+                if (!m) fail("Bad \\u code in text");
+                bytes.push(...enc.encode(String.fromCodePoint(parseInt(m[1], 16)))); i += m[0].length;
+            } else fail("Bad \\ code in text");
+            run = i;
+        }
+        fail("Text is missing its closing quote");
+    }
+    function value() {
+        skip();
+        const c = src[i];
+        if (c === "{") return table();
+        if (c === '"' || c === "'") return quoted();
+        if (c === "[" && /^\[=*\[/.test(ahead(50))) return longString();
+        if (c === "-") {
+            i++;
+            const v = value();
+            if (typeof v !== "number") fail("A - sign before something that isn't a number");
+            return -v;
+        }
+        let m = NUM.exec(ahead(64));
+        if (m) { i += m[0].length; return Number(m[0]); }
+        m = NAME.exec(ahead(64));
+        if (m) {
+            const w = m[0];
+            i += w.length;
+            if (w === "true") return true;
+            if (w === "false") return false;
+            if (w === "nil") return null;
+            skip();
+            if (src[i] === ".") {
+                i++;
+                const m2 = NAME.exec(ahead(64));
+                if (!m2) fail(`Can't read "${w}."`);
+                i += m2[0].length;
+                const fn = w + "." + m2[0];
+                skip();
+                if (src[i] !== "(") fail(`Can't read ${fn}`);
+                i++;
+                const args = [];
+                skip();
+                while (src[i] !== ")") {
+                    if (i >= n) fail(`${fn}( is never closed`);
+                    args.push(value());
+                    skip();
+                    if (src[i] === ",") i++;
+                    else if (src[i] !== ")") fail(`Expected , or ) in ${fn}(…)`);
+                    skip();
+                }
+                i++;
+                if (fn === "CFrame.new" || fn === "Vector3.new") return { __call: fn, args };
+                fail(`Can't read ${fn}(…)`);
+            }
+            fail(`Unknown word "${w}"`);
+        }
+        fail(i >= n ? "The file ends too early" : `Unexpected "${c}"`);
+    }
+    function table() {
+        i++;
+        const arr = [], obj = {};
+        let keyed = false;
+        for (;;) {
+            skip();
+            if (i >= n) fail("A { is never closed");
+            if (src[i] === "}") { i++; break; }
+            if (src[i] === "[" && !/^\[=*\[/.test(ahead(50))) {
+                i++;
+                const k = value();
+                skip();
+                if (src[i] !== "]") fail("Expected ]");
+                i++; skip();
+                if (src[i] !== "=") fail("Expected = after [key]");
+                i++;
+                obj[String(k)] = value();
+                keyed = true;
+            } else {
+                const m = NAME.exec(ahead(64));
+                let j = m ? i + m[0].length : -1;
+                if (m) while (j < n && /\s/.test(src[j])) j++;
+                if (m && src[j] === "=" && src[j + 1] !== "=") {
+                    i = j + 1;
+                    obj[m[0]] = value();
+                    keyed = true;
+                } else arr.push(value());
+            }
+            skip();
+            if (src[i] === "," || src[i] === ";") { i++; continue; }
+            if (src[i] === "}") { i++; break; }
+            fail("Expected , or } (a comma may be missing)");
+        }
+        if (!keyed) return arr;
+        arr.forEach((v, k) => { obj[String(k + 1)] = v; });
+        return obj;
+    }
+
+    skip();
+    if (src.startsWith("return", i) && !/[A-Za-z0-9_]/.test(src[i + 6] || "")) i += 6;
+    else fail("settings.lua should start with return {");
+    const result = value();
+    skip();
+    if (src[i] === ";") { i++; skip(); }
+    if (i < n) fail("Something follows the settings table");
+    return result;
+}
+
+const pairsOf = v => Array.isArray(v) ? v.map((x, k) => [String(k + 1), x]) : isObj(v) ? Object.entries(v) : [];
+const textList = v => pairsOf(v).map(([, x]) =>
+    typeof x === "string" ? x : isObj(x) ? String(x.text ?? x.message ?? x["1"] ?? "") : "").map(s => s.trim()).filter(Boolean);
+function msgTable(m) {
+    const out = {};
+    for (const [cat, list] of pairsOf(m)) { const l = textList(list); if (l.length) out[cat] = l; }
+    return out;
+}
+
+// settings.lua as a Lua table -> the pieces the site keeps.
+function fromLua(t) {
+    if (!isObj(t)) throw new Error("This file doesn't hold a settings table");
+    const r = { defaults: {}, messages: null, adverts: {}, positions: null, groups: {}, acctSets: {}, notes: [] };
+    for (const k of DEFAULT_KEYS) if (isObj(t.defaults) && typeof t.defaults[k] === "number") r.defaults[k] = t.defaults[k];
+    if (t.messages && typeof t.messages === "object") r.messages = msgTable(t.messages);
+    for (const [h, v] of pairsOf(t.house_adverts)) {
+        const l = typeof v === "string" ? [v.trim()].filter(Boolean) : textList(v);
+        if (!RE_HOUSE.test(h)) r.notes.push(`House "${h}" skipped: odd characters in its name`);
+        else if (l.length) r.adverts[h] = l;
+    }
+    if (Array.isArray(t.saved_positions)) {
+        r.positions = [];
+        for (const p of t.saved_positions) {
+            const ok = p && p.__call === "CFrame.new" && p.args.every(x => typeof x === "number") && (p.args.length === 12 || p.args.length === 3);
+            if (ok) r.positions.push(p.args.length === 3 ? [...p.args, 1, 0, 0, 0, 1, 0, 0, 0, 1] : p.args);
+            else r.notes.push("A position that isn't CFrame.new(…) with 12 numbers was skipped");
+        }
+    }
+    for (const [g, grp] of pairsOf(t.users)) {
+        if (!isObj(grp)) continue;
+        if (!RE_GROUP.test(g)) { r.notes.push(`Group "${g}" skipped: odd characters in its name`); continue; }
+        const w = isObj(grp.Webhook) ? grp.Webhook : {};
+        const tr = isObj(w.Trades) ? w.Trades : {};
+        const s = v => typeof v === "string" ? v.trim() : "";
+        const G = r.groups[g] = { webhooks: { no_houses: s(w.No_Houses), success: s(tr.Succesful_Trade_Link),
+            failed: s(tr.Failed_Trade_Link), chat_log: s(tr.Chat_Log_Link) }, accounts: {} };
+        for (const [name, a] of Object.entries(grp)) {
+            if (name === "Webhook" || !isObj(a)) continue;
+            if (!RE_ACCOUNT.test(name)) { r.notes.push(`"${name}" skipped: not a Roblox username`); continue; }
+            const acct = { house: typeof a.house_trading === "string" ? a.house_trading.trim() : "",
+                min_accept: Number(a.min_accept_value) || 0, message_set: "Default", overrides: {} };
+            for (const k of DEFAULT_KEYS) if (typeof a[k] === "number") acct.overrides[k] = a[k];
+            if (a.messages && typeof a.messages === "object") {
+                const own = msgTable(a.messages);
+                if (Object.keys(own).length) { r.acctSets[name] = own; acct.message_set = name; }
+            }
+            if (!acct.house) r.notes.push(`${name} has no house_trading`);
+            G.accounts[name] = acct;
+        }
+    }
+    return r;
+}
+
+// Applies one file to a doc; counts what changed into st.
+function applyImport(doc, r, o, st) {
+    if (o.general) for (const [k, v] of Object.entries(r.defaults)) if (doc.defaults[k] !== v) { doc.defaults[k] = v; st.general = true; }
+    if (o.messages && r.messages && Object.keys(r.messages).length) {
+        if (JSON.stringify(doc.message_sets.Default) !== JSON.stringify(r.messages)) st.messages = Object.keys(r.messages).length;
+        doc.message_sets.Default = clone(r.messages);
+    }
+    if (o.adverts) for (const [h, l] of Object.entries(r.adverts)) {
+        const had = Object.keys(doc.house_adverts).find(x => x.toLowerCase() === h.toLowerCase());
+        if (!had) st.housesNew.push(h);
+        else if (JSON.stringify(doc.house_adverts[had]) !== JSON.stringify(l)) st.housesChanged.push(h);
+        if (had && had !== h) doc.house_adverts = renameKey(doc.house_adverts, had, h);
+        doc.house_adverts[h] = clone(l);
+    }
+    if (o.positions && r.positions && r.positions.length) {
+        if (JSON.stringify(doc.saved_positions) !== JSON.stringify(r.positions)) st.positions = r.positions.length;
+        doc.saved_positions = clone(r.positions);
+    }
+    if (o.accounts) for (const [g, G] of Object.entries(r.groups)) {
+        if (!doc.groups[g]) { doc.groups[g] = { webhooks: blankWebhooks(), accounts: {} }; st.groupsNew.push(g); }
+        for (const [k, url] of Object.entries(G.webhooks)) {
+            if (url && doc.groups[g].webhooks[k] !== url) { doc.groups[g].webhooks[k] = url; st.webhooks.add(g); }
+        }
+        for (const [name, a] of Object.entries(G.accounts)) {
+            const had = findAcct(name, doc);
+            const next = clone(a);
+            if (had) {
+                if (a.message_set === "Default") next.message_set = had.a.message_set;   // keep the set chosen on the site
+                if (!Object.keys(a.overrides).length) next.overrides = had.a.overrides;
+                delete doc.groups[had.g].accounts[had.name];
+                if (had.g !== g) st.moved.push(`${name} (${had.g} → ${g})`);
+                else if (JSON.stringify(had.a) !== JSON.stringify(next)) st.changed.push(name);
+                else st.same++;
+            } else st.added.push(name);
+            if (r.acctSets[name]) { doc.message_sets[name] = clone(r.acctSets[name]); st.ownSets.push(name); }
+            doc.groups[g].accounts[name] = next;
+        }
+    }
+}
+
+function importResult() {
+    const doc = clone(S.doc);
+    const st = { added: [], changed: [], moved: [], same: 0, groupsNew: [], webhooks: new Set(), housesNew: [],
+        housesChanged: [], messages: 0, positions: 0, general: false, ownSets: [] };
+    for (const f of IMP.files) if (f.data) applyImport(doc, f.data, IMP.opts, st);
+    return { doc, st };
+}
+
+function openImport() {
+    const D = S.doc;
+    IMP = { files: [], opts: {
+        accounts: true, adverts: true,
+        messages: !Object.keys(D.message_sets.Default).length,
+        positions: !D.saved_positions.length,
+        general: !S.version,
+    } };
+    renderImport();
+}
+
+function renderImport() {
+    const o = IMP.opts;
+    const files = IMP.files.map(f => `<div class="s-file"><b>${esc(f.name)}</b>: ${f.error
+        ? `<span class="s-bad">${esc(f.error)}</span>`
+        : esc(summarize(f.data))}${f.data && f.data.notes.length
+        ? `<ul class="s-list s-warn">${[...new Set(f.data.notes)].slice(0, 8).map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}</div>`).join("");
+    const opt = (k, title, help) => `<label class="s-check"><input type="checkbox" data-opt="${k}" ${o[k] ? "checked" : ""}>
+        <span>${title}<small>${help}</small></span></label>`;
+    const ready = IMP.files.some(f => f.data);
+    let preview = "";
+    if (ready) {
+        const { st } = importResult();
+        const li = [];
+        if (st.added.length) li.push(`${plural(st.added.length, "new account")}`);
+        if (st.changed.length) li.push(`${plural(st.changed.length, "account")} changed: ${esc(st.changed.slice(0, 10).join(", "))}${st.changed.length > 10 ? "…" : ""}`);
+        if (st.moved.length) li.push(`Moved to another group: ${esc(st.moved.join(", "))}`);
+        if (st.same) li.push(`${plural(st.same, "account")} already the same`);
+        if (st.groupsNew.length) li.push(`New groups: ${esc(st.groupsNew.join(", "))}`);
+        if (st.webhooks.size) li.push(`Webhooks filled in for: ${esc([...st.webhooks].join(", "))}`);
+        if (st.housesNew.length) li.push(`New houses: ${esc(st.housesNew.join(", "))}`);
+        if (st.housesChanged.length) li.push(`Adverts replaced for: ${esc(st.housesChanged.join(", "))}`);
+        if (st.ownSets.length) li.push(`Accounts with their own messages (each gets a set named after it): ${esc(st.ownSets.join(", "))}`);
+        if (st.messages) li.push(`Default messages replaced (${plural(st.messages, "category")})`);
+        if (st.positions) li.push(`Positions replaced (${st.positions})`);
+        if (st.general) li.push("General numbers replaced");
+        preview = `<h3 style="margin-top:18px">What changes</h3>${li.length ? `<ul class="s-list">${li.map(x => `<li>${x}</li>`).join("")}</ul>`
+            : `<p class="s-hint">Nothing: the editor already matches.</p>`}`;
+    }
+    openModal(`<h2>Import settings.lua</h2>
+        <p class="s-hint">Pick the settings.lua of each PC; you can select several at once. This only fills in the editor:
+            check it, then press Save. Nothing in the file is run.</p>
+        <label class="s-drop"><input type="file" id="impFile" accept=".lua,.txt,text/plain" multiple>
+            <b>Choose settings.lua files</b><br><span class="s-hint">or drop them here</span></label>
+        <details><summary>…or paste the text instead</summary>
+            <textarea class="ta" id="impPaste" rows="6" style="margin-top:8px" placeholder="return { … }" spellcheck="false"></textarea>
+            <button class="btn small" style="margin-top:8px" data-act="impPaste">Read pasted text</button></details>
+        ${files ? `<div class="s-files">${files}</div>` : ""}
+        <h3 style="margin-top:18px">Take from the file</h3>
+        ${opt("accounts", "Accounts, groups and webhooks", "Adds new accounts and updates the house, min accept and own numbers of ones already here. Message sets picked on the site are kept.")}
+        ${opt("adverts", "Adverts", "Adds new houses and replaces the adverts of houses in the file.")}
+        ${opt("messages", "Messages", "Replaces the Default message set with the file's messages.")}
+        ${opt("positions", "Positions", "Replaces the door positions.")}
+        ${opt("general", "General numbers", "Replaces suggestion range, message delay, etc.")}
+        ${IMP.files.filter(f => f.data).length > 1 ? `<p class="s-hint">With several files, later ones win where they disagree.</p>` : ""}
+        ${preview}
+        <div class="s-foot"><button class="btn" data-act="closeModal">Cancel</button>
+            <button class="btn primary" data-act="impApply" ${ready ? "" : "disabled"}>Put into the editor</button></div>`);
+}
+
+function summarize(r) {
+    const accts = Object.values(r.groups).reduce((s, G) => s + Object.keys(G.accounts).length, 0);
+    return [
+        `${plural(accts, "account")} in ${Object.keys(r.groups).join(", ") || "no groups"}`,
+        plural(Object.keys(r.adverts).length, "house"),
+        r.messages ? plural(Object.keys(r.messages).length, "message category") : "no messages",
+        r.positions ? plural(r.positions.length, "position") : "no positions",
+    ].join(" · ");
+}
+
+function addImportText(name, text) {
+    try { IMP.files.push({ name, data: fromLua(parseLua(text)) }); }
+    catch (err) { IMP.files.push({ name, error: err.message }); }
+}
+
+async function readImportFiles(list) {
+    for (const f of list) {
+        if (f.size > 2e6) { IMP.files.push({ name: f.name, error: "Too big for a settings.lua" }); continue; }
+        addImportText(f.name, await f.text());
+    }
+    renderImport();
+}
+
+const IMPORT_ACTIONS = {
+    closeModal: () => closeModal(),
+    impPaste: () => {
+        const text = $("impPaste").value;
+        if (!text.trim()) return;
+        addImportText(`Pasted text ${IMP.files.length + 1}`, text);
+        renderImport();
+    },
+    impApply: () => {
+        const { doc, st } = importResult();
+        S.doc = normalize(doc);
+        S.posText = null; S.posErr = "";
+        closeModal();
+        S.tab = "accounts";
+        renderSettings();
+        say("info", `Imported into the editor: ${plural(st.added.length, "new account")}, ${plural(st.changed.length + st.moved.length, "changed one")}.
+            Look it over, then press <b>Save</b>. To add another PC's settings.lua, press Import again.`);
+    },
+    openVersion: async el => {
+        if (settingsDirty() && !confirm("Open this version and lose your unsaved changes?")) return;
+        const v = Number(el.dataset.v);
+        el.disabled = true;
+        const mine = session;
+        const r = await post("/api/settings/version", { version: v });
+        if (mine !== session) return;
+        if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+        if (r.kind !== "ok") { el.disabled = false; return alert("Couldn't open it: " + failText(r)); }
+        S.doc = normalize(r.body.doc);
+        S.posText = null; S.posErr = ""; S.sel.clear();
+        closeModal();
+        renderSettings();
+        say("info", `Showing version ${v} from ${esc(exact(r.body.savedAt))}. Press <b>Save</b> to make it the current settings again, or <b>Discard</b> to go back.`);
+    },
+};
+
+$("modal").addEventListener("change", e => {
+    if (!IMP) return;
+    if (e.target.id === "impFile") return readImportFiles([...e.target.files]);
+    if (e.target.dataset.opt) { IMP.opts[e.target.dataset.opt] = e.target.checked; renderImport(); }
+});
+$("modal").addEventListener("dragover", e => { if (IMP) e.preventDefault(); });
+$("modal").addEventListener("drop", e => {
+    if (!IMP) return;
+    e.preventDefault();
+    readImportFiles([...e.dataTransfer.files]);
+});
 </script>
 </body>
 </html>
