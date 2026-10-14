@@ -9,51 +9,50 @@
 <title>House Trading Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
     color-scheme: dark;
-    --bg: #0d131a;
-    --card: #151d27;
-    --raised: #1b2532;
-    --ink: #e7eef6;
-    --soft: #b9c6d4;
-    --muted: #8193a8;
-    --line: #253142;
-    --blue: #2ea8f5;
-    --pink: #ea4c82;
-    --green: #41b04b;
-    --purple: #9d52e3;
-    --amber: #f0a23a;
-    --red: #f06a6a;
-    --money: #5ed68e;
-    --tile: #1d2835;
-    --tile-neon: #17322a;
-    --tile-mega: #2a2140;
-    --radius: 16px;
+    --bg: #0a0a0a;
+    --side: #0d0d0d;
+    --card: #111111;
+    --raised: #171717;
+    --ink: #f5f5f5;
+    --soft: #a3a3a3;
+    --muted: #737373;
+    --line: #222222;
+    --blue: #3b82f6;
+    --pink: #ec4899;
+    --green: #22c55e;
+    --purple: #a855f7;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --money: #22c55e;
+    --tile: #161616;
+    --tile-neon: #0f2219;
+    --tile-mega: #1c1629;
+    --radius: 12px;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { background: var(--bg); }
 body {
     margin: 0;
-    font-family: "Fredoka", "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     background: var(--bg);
     color: var(--ink);
 }
 button, input { font: inherit; color: inherit; }
 .logo {
-    width: 52px; height: 52px; border-radius: 15px; flex: none;
-    background: linear-gradient(145deg, #2ea8f5, #1a7fd0);
-    display: grid; place-items: center; box-shadow: 0 6px 18px rgba(46,168,245,.3);
+    width: 52px; height: 52px; border-radius: 12px; flex: none;
+    background: #1c1c1c; border: 1px solid #2a2a2a; display: grid; place-items: center;
 }
 
 /* ── login ────────────────────────────────────────────── */
 .gate {
     min-height: 100vh; display: grid; place-items: center; padding: 24px;
     background:
-        radial-gradient(900px 420px at 20% -10%, rgba(46,168,245,.28), transparent 70%),
-        linear-gradient(170deg, #13283d 0%, #0f1c2a 45%, var(--bg) 100%);
+        radial-gradient(800px 400px at 50% -10%, rgba(88,80,160,.22), transparent 70%), var(--bg);
 }
 .gate form {
     width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--line);
@@ -66,93 +65,99 @@ button, input { font: inherit; color: inherit; }
     width: 100%; display: flex; align-items: center; gap: 10px; padding: 0 14px; min-height: 56px;
     background: var(--raised); border: 1px solid var(--line); border-radius: 14px;
 }
-.gate .field:focus-within { border-color: var(--blue); }
+.gate .field:focus-within { border-color: #4a4a4a; }
 .gate input { border: 0; background: transparent; outline: 0; font-size: 18px; width: 100%; letter-spacing: .5px; }
 .gate input::placeholder { color: var(--muted); letter-spacing: 0; }
 .gate button {
     width: 100%; margin-top: 12px; height: 54px; border: 0; border-radius: 14px; cursor: pointer;
-    background: var(--blue); color: #fff; font-size: 18px; font-weight: 600;
-    box-shadow: 0 6px 18px rgba(46,168,245,.3); transition: filter .12s, opacity .12s;
+    background: #fff; color: #0a0a0a; font-size: 16px; font-weight: 600; transition: filter .12s, opacity .12s;
 }
 .gate button:hover { filter: brightness(1.08); }
 .gate button:disabled { opacity: .55; cursor: default; filter: none; }
 .gate .msg { min-height: 22px; margin-top: 14px; font-size: 14.5px; color: var(--muted); }
 .gate .msg.bad { color: var(--red); }
 
-/* ── top band ─────────────────────────────────────────── */
-.hero {
-    background:
-        radial-gradient(900px 300px at 15% -40%, rgba(46,168,245,.35), transparent 70%),
-        linear-gradient(160deg, #13283d 0%, #0f1c2a 60%, var(--bg) 100%);
-    padding: 28px 24px 72px;
-    border-bottom: 1px solid #16222f;
+/* ── shell: sidebar + page ───────────────────────────── */
+.shell { display: flex; min-height: 100vh; }
+.side {
+    width: 240px; flex: none; background: var(--side); border-right: 1px solid #1a1a1a;
+    position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; padding: 18px 12px;
 }
-.hero-inner {
-    max-width: 1280px; margin: 0 auto;
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 4px; }
+.brand .logo { width: 36px; height: 36px; border-radius: 10px; }
+.brand b { font-size: 17px; font-weight: 700; letter-spacing: -.2px; }
+.conn {
+    margin: 16px 0 18px; padding: 10px 12px; border-radius: 10px;
+    background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.18);
 }
-.brand { display: flex; align-items: center; gap: 14px; }
-h1 { margin: 0; font-size: 32px; font-weight: 700; }
-.sub { margin: 4px 0 0; font-size: 15px; color: var(--soft); }
-.sub.bad { color: var(--amber); }
-.right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.stats { display: flex; gap: 10px; flex-wrap: wrap; }
-.stat {
-    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09);
-    border-radius: 14px; padding: 9px 16px; min-width: 92px;
+.conn strong { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--green); }
+.conn strong::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(34,197,94,.18); }
+.conn.bad { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.25); }
+.conn.bad strong { color: var(--amber); }
+.conn.bad strong::before { background: var(--amber); box-shadow: 0 0 0 3px rgba(245,158,11,.18); }
+.sub { margin: 3px 0 0; font-size: 12.5px; color: var(--soft); }
+.nav { display: flex; flex-direction: column; gap: 4px; padding-top: 14px; border-top: 1px solid #1a1a1a; }
+.nav button, .lock {
+    display: flex; align-items: center; gap: 12px; width: 100%; height: 44px; padding: 0 14px;
+    border: 0; border-radius: 10px; background: transparent; cursor: pointer;
+    font-size: 14.5px; font-weight: 500; color: var(--soft); text-align: left;
 }
-.stat b { display: block; font-size: 22px; font-weight: 600; line-height: 1.2; }
-.stat b.money { color: var(--money); }
-.stat span { font-size: 12.5px; color: var(--muted); }
-.lock {
-    align-self: stretch; display: flex; align-items: center; gap: 8px; padding: 0 16px; cursor: pointer;
-    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); border-radius: 14px;
-    font-size: 15px; font-weight: 500; color: var(--soft);
+.nav button:hover, .lock:hover { background: #161616; color: var(--ink); }
+.nav button.on { background: #fff; color: #0a0a0a; font-weight: 600; }
+.lock { margin-top: auto; }
+.page {
+    flex: 1; min-width: 0;
+    background: radial-gradient(900px 300px at 40% -80px, rgba(88,80,160,.16), transparent 70%);
 }
-.lock:hover { color: var(--ink); border-color: rgba(255,255,255,.2); }
+.page-in { max-width: 1240px; margin: 0 auto; padding: 32px 28px 48px; }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -.4px; }
+.page-head p { margin: 4px 0 0; font-size: 14px; color: var(--soft); }
+
+/* stat tiles */
+.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-top: 22px; }
+.stat { background: var(--card); border: 1px solid #1c1c1c; border-radius: 10px; padding: 12px 14px; }
+.stat span { display: block; font-size: 11.5px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; color: var(--soft); }
+.stat b { display: block; margin-top: 8px; font-size: 22px; font-weight: 700; letter-spacing: -.3px; line-height: 1.2; }
+.stat b small { font-size: 13px; font-weight: 600; color: var(--green); margin-left: 6px; }
+.stat b.money { color: var(--ink); }
+.stat .bar { height: 3px; margin-top: 10px; border-radius: 3px; background: #262626; overflow: hidden; }
+.stat .bar i { display: block; height: 100%; background: var(--green); }
 
 /* ── controls: group switch + account search ──────────── */
-.wrap { max-width: 1280px; margin: -48px auto 48px; padding: 0 20px; }
-.toolbar {
-    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-    box-shadow: 0 10px 30px rgba(0,0,0,.35);
-    padding: 12px; position: sticky; top: 10px; z-index: 5;
-    display: flex; flex-wrap: wrap; gap: 12px;
-}
+.wrap { margin-top: 18px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; position: sticky; top: 0; z-index: 5; padding: 8px 0; background: var(--bg); }
 .groups {
-    flex: 3 1 440px; display: flex; gap: 6px; padding: 5px;
-    background: var(--raised); border: 1px solid var(--line); border-radius: 14px;
+    display: flex; gap: 2px; padding: 3px; flex-wrap: wrap;
+    background: var(--card); border: 1px solid #1c1c1c; border-radius: 10px;
 }
 .groups button {
-    flex: 1 1 0; min-width: 0; height: 52px; border: 0; border-radius: 10px; background: transparent;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    font-size: 20px; font-weight: 600; color: var(--soft); text-transform: capitalize;
+    height: 30px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent;
+    display: flex; align-items: center; gap: 7px;
+    font-size: 13px; font-weight: 600; color: var(--soft); text-transform: capitalize;
     cursor: pointer; transition: background .12s, color .12s;
 }
-.groups button:hover { background: rgba(255,255,255,.05); color: var(--ink); }
-.groups button.on { background: var(--blue); color: #fff; box-shadow: 0 4px 14px rgba(46,168,245,.35); }
-.groups .n {
-    font-size: 14px; font-weight: 600; line-height: 22px; padding: 0 9px; border-radius: 999px;
-    background: rgba(255,255,255,.08); color: var(--muted);
-}
-.groups button.on .n { background: rgba(255,255,255,.24); color: #fff; }
+.groups button:hover { color: var(--ink); }
+.groups button.on { background: #fff; color: #0a0a0a; }
+.groups .n { font-size: 11.5px; font-weight: 600; line-height: 18px; padding: 0 6px; border-radius: 5px; background: #222; color: var(--soft); }
+.groups button.on .n { background: #e5e5e5; color: #0a0a0a; }
 .search {
-    flex: 2 1 260px; display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 0 16px;
-    background: var(--raised); border: 1px solid var(--line); border-radius: 14px;
+    flex: 1 1 260px; display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px;
+    background: var(--card); border: 1px solid #222; border-radius: 10px;
 }
-.search:focus-within { border-color: var(--blue); }
-.search input { border: 0; background: transparent; outline: 0; font-size: 17px; width: 100%; }
+.search:focus-within { border-color: #3f3f3f; }
+.search input { border: 0; background: transparent; outline: 0; font-size: 14px; width: 100%; }
 .search input::placeholder { color: var(--muted); }
 
 /* ── account cards ────────────────────────────────────── */
 .acct {
-    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
-    margin-top: 16px; padding: 16px 18px 18px;
+    background: var(--card); border: 1px solid #1c1c1c; border-radius: var(--radius);
+    margin-top: 12px; padding: 16px 18px 18px;
 }
 .acct-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .avatar {
     width: 60px; height: 60px; border-radius: 16px; flex: none; object-fit: cover;
-    background: linear-gradient(#243244, #1b2735);
+    background: #1c1c1c;
 }
 .avatar.fallback { display: grid; place-items: center; font-size: 26px; font-weight: 600; color: var(--muted); }
 .who { min-width: 0; }
@@ -160,7 +165,7 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
 .uid { font-size: 13px; font-weight: 400; color: var(--muted); }
 .group {
     font-size: 12px; font-weight: 500; letter-spacing: .3px; text-transform: capitalize;
-    padding: 1px 9px; border-radius: 999px; background: rgba(46,168,245,.14); color: #7cc8fa;
+    padding: 1px 8px; border-radius: 6px; background: rgba(59,130,246,.14); color: #7fb0ff; border: 1px solid rgba(59,130,246,.3);
 }
 .meta { font-size: 13.5px; color: var(--muted); display: flex; align-items: center; gap: 7px; margin-top: 3px; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: #4a5a6e; flex: none; }
@@ -169,15 +174,21 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
 .meta time { color: var(--ink); font-weight: 500; }
 .acct-stats { margin-left: auto; display: flex; gap: 22px; }
 .acct-stats div { text-align: right; }
-.acct-stats b { display: block; font-size: 18px; font-weight: 600; }
+.acct-stats b { display: block; font-size: 17px; font-weight: 700; }
 .acct-stats b.money { color: var(--money); }
 .house {
-    font-size: 12.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; margin-left: 6px; vertical-align: middle;
-    background: rgba(240,162,58,.14); color: var(--amber);
+    font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 6px; vertical-align: middle;
+    background: rgba(245,158,11,.12); color: var(--amber); border: 1px solid rgba(245,158,11,.28);
 }
+.rm {
+    width: 32px; height: 32px; flex: none; border-radius: 10px; border: 1px solid var(--line); background: var(--raised);
+    color: var(--muted); font-size: 14px; cursor: pointer;
+}
+.rm:hover { color: var(--red); border-color: rgba(240,106,106,.5); }
+.house.none { color: var(--muted); background: transparent; border: 1px dashed var(--line); }
 .acct-stats b.out, .stat b.out { color: var(--red); }
 .acct-stats b.unknown { color: var(--muted); }
-.acct-stats span { font-size: 12.5px; color: var(--muted); }
+.acct-stats span { font-size: 11px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: var(--muted); }
 
 /* ── item tiles (modelled on the in-game backpack) ────── */
 .grid {
@@ -198,7 +209,8 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude; opacity: .75;
 }
-.item:hover .tile { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,.4); border-bottom-color: var(--blue); }
+.tile { border: 1px solid #1f1f1f; }
+.item:hover .tile { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,.5); border-color: #3a3a3a; }
 .tile img { width: 80%; height: 80%; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(0,0,0,.35)); }
 .tile.missing::after { content: "no image"; font-size: 11px; color: var(--muted); }
 .badges { position: absolute; right: 4px; bottom: 4px; display: flex; gap: 1px; }
@@ -222,37 +234,24 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
 .price { font-size: 12.5px; text-align: center; font-weight: 600; color: var(--money); line-height: 1.3; }
 .more {
     margin-top: 14px; border: 1px solid var(--line); background: var(--raised); border-radius: 10px;
-    padding: 7px 14px; font-size: 14px; cursor: pointer; color: #7cc8fa; font-weight: 500;
+    padding: 7px 14px; font-size: 13.5px; cursor: pointer; color: var(--ink); font-weight: 600;
 }
 .more:hover { border-color: #3a4a60; }
 .nothing { margin-top: 14px; font-size: 14px; color: var(--muted); }
 .empty { text-align: center; color: var(--muted); padding: 48px 0; }
 
-/* ── page switch in the top band ──────────────────────── */
-.nav {
-    align-self: stretch; display: flex; gap: 4px; padding: 4px;
-    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.09); border-radius: 14px;
-}
-.nav button {
-    border: 0; background: transparent; border-radius: 10px; padding: 0 16px; min-height: 40px; cursor: pointer;
-    font-size: 15px; font-weight: 600; color: var(--soft);
-}
-.nav button:hover { color: var(--ink); }
-.nav button.on { background: var(--blue); color: #fff; }
-
 /* ── settings ─────────────────────────────────────────── */
 select { font: inherit; color: inherit; }
 textarea { font: inherit; color: inherit; }
-#setTabs { align-self: center; flex-basis: 420px; }
-.savebar { flex: 2 1 340px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.savebar { flex: 1 1 340px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .s-state { margin-right: auto; font-size: 14.5px; color: var(--muted); }
 .s-state.dirty { color: var(--amber); font-weight: 500; }
 .btn {
     height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--raised);
     font-size: 14.5px; font-weight: 500; white-space: nowrap; cursor: pointer;
 }
-.btn:hover { border-color: #3a4a60; }
-.btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+.btn:hover { border-color: #3a3a3a; }
+.btn.primary { background: #fff; border-color: #fff; color: #0a0a0a; font-weight: 600; }
 .btn.danger { color: var(--red); }
 .btn.small { height: 32px; padding: 0 10px; font-size: 13.5px; }
 .btn:disabled { opacity: .45; cursor: default; }
@@ -262,11 +261,11 @@ textarea { font: inherit; color: inherit; }
 }
 .in { height: 36px; padding: 0 10px; width: 100%; }
 select.in { padding: 0 6px; }
-.in:focus, .ta:focus { border-color: var(--blue); }
+.in:focus, .ta:focus { border-color: #4a4a4a; }
 .ta { display: block; width: 100%; padding: 9px 12px; line-height: 1.5; resize: vertical; font-size: 14px; }
-.ta::placeholder, .in::placeholder { color: #5f7186; }
+.ta::placeholder, .in::placeholder { color: #5a5a5a; }
 .s-num { width: 100px; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); margin-top: 16px; padding: 16px 18px 18px; }
+.card { background: var(--card); border: 1px solid #1c1c1c; border-radius: var(--radius); margin-top: 16px; padding: 16px 18px 18px; }
 .card h2 { margin: 0; font-size: 19px; font-weight: 600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .card h3 { margin: 0; font-size: 16px; font-weight: 600; }
 .s-tools { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
@@ -302,14 +301,14 @@ select.in { padding: 0 6px; }
 .s-add { display: flex; gap: 8px; margin-top: 12px; }
 .s-bulk {
     position: sticky; bottom: 12px; z-index: 4; display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap;
-    box-shadow: 0 10px 30px rgba(0,0,0,.5); border-color: var(--blue);
+    box-shadow: 0 10px 30px rgba(0,0,0,.6); border-color: #3a3a3a;
 }
 .s-bulk > b { align-self: center; margin-right: 6px; }
 .s-bulk label { display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--muted); }
 .s-bulk .in { width: 150px; }
 .s-bulk .s-pair { display: flex; gap: 4px; align-items: flex-end; }
 .s-cols { display: grid; grid-template-columns: 250px 1fr; gap: 16px; align-items: start; }
-.s-sets { position: sticky; top: 104px; }
+.s-sets { position: sticky; top: 64px; }
 .s-setbtn {
     width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px;
     padding: 9px 12px; border-radius: 10px; border: 1px solid transparent; background: transparent; cursor: pointer; text-align: left;
@@ -317,9 +316,10 @@ select.in { padding: 0 6px; }
 .s-setbtn b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .s-setbtn span { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
 .s-setbtn:hover { background: rgba(255,255,255,.04); }
-.s-setbtn.on { background: rgba(46,168,245,.14); border-color: rgba(46,168,245,.45); }
+.s-setbtn.on { background: #fff; border-color: #fff; color: #0a0a0a; }
+.s-setbtn.on span { color: #525252; }
 .s-cat { margin-top: 6px; border: 1px solid var(--line); border-radius: 12px; }
-.s-cat[open] { border-color: #34465c; }
+.s-cat[open] { border-color: #333; }
 .s-cat > summary {
     list-style: none; display: flex; align-items: center; gap: 10px; margin: 0; padding: 10px 14px;
     color: var(--ink); font-size: 15px; font-weight: 500;
@@ -366,10 +366,15 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
     .s-field .s-hint { grid-column: 1; }
 }
 
+@media (max-width: 900px) {
+    .shell { flex-direction: column; }
+    .side { width: auto; height: auto; position: static; border-right: 0; border-bottom: 1px solid #1a1a1a; }
+    .nav { flex-direction: row; }
+    .lock { margin-top: 8px; }
+    .page-in { padding: 20px 14px 40px; }
+}
 @media (max-width: 640px) {
     .toolbar { position: static; }   /* two full-width rows would cover half a phone screen */
-    .groups button { height: 46px; font-size: 17px; }
-    .search { min-height: 56px; }
     .acct-stats { margin-left: 0; width: 100%; justify-content: flex-start; }
     .acct-stats div { text-align: left; }
 }
@@ -396,39 +401,34 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
     </form>
 </section>
 
-<div id="app" hidden>
-    <header class="hero">
-        <div class="hero-inner">
-            <div class="brand">
-                <div class="logo">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/>
-                    </svg>
-                </div>
-                <div>
-                    <h1>House Trading Dashboard</h1>
-                    <p class="sub" id="status"></p>
-                </div>
+<div id="app" class="shell" hidden>
+    <aside class="side">
+        <div class="brand">
+            <div class="logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9v11h14V9"/><path d="M10 20v-6h4v6"/>
+                </svg>
             </div>
-            <div class="right">
-                <div class="stats" id="stats"></div>
-                <div class="nav" id="nav">
-                    <button type="button" class="on" data-view="inv">Inventory</button>
-                    <button type="button" data-view="set">Settings</button>
-                </div>
-                <button class="lock" id="lockBtn" type="button" title="Hide everything and ask for the password again">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-                    Lock
-                </button>
-            </div>
+            <b>House Trading</b>
         </div>
-    </header>
+        <div class="conn" id="conn"><strong id="connTitle">Connected</strong><p class="sub" id="status"></p></div>
+        <nav class="nav" id="nav">
+            <button type="button" class="on" data-view="inv"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg>Inventory</button>
+            <button type="button" data-view="set"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Settings</button>
+        </nav>
+        <button class="lock" id="lockBtn" type="button" title="Hide everything and ask for the password again">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Lock
+        </button>
+    </aside>
+    <div class="page"><div class="page-in">
+    <header class="page-head"><div><h1 id="pageTitle">Inventory Overview</h1><p id="pageSub">Pets and items on every account</p></div></header>
+    <div class="stats" id="stats"></div>
 
     <div class="wrap" id="invView">
         <section class="toolbar">
             <div class="groups" id="groups" role="group" aria-label="Group"></div>
             <label class="search">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8193a8" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#737373" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
                 <input id="q" type="search" placeholder="Search accounts" autocomplete="off" spellcheck="false">
             </label>
         </section>
@@ -452,6 +452,7 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
         <main id="setBody"></main>
     </div>
 
+    </div></div>
     <div class="s-modal" id="modal" hidden><div class="s-dialog" id="dialog" role="dialog" aria-modal="true"></div></div>
 </div>
 
@@ -600,7 +601,7 @@ function load(body) {
         const items = stack(Array.isArray(a.items) ? a.items : []);
         return {
             username: String(a.username), userId: Number(a.userId) || 0,
-            group: String(a.group || "") || "other", updatedAt: (Number(a.updatedAt) || 0) + skew, items,
+            group: /^other$/i.test(String(a.group || "").trim()) ? "" : String(a.group || "").trim(), updatedAt: (Number(a.updatedAt) || 0) + skew, items,
             pets:  items.filter(it => it.category === "pets").reduce((s, it) => s + it.count, 0),
             total: items.reduce((s, it) => s + it.count, 0),
             value: items.reduce((s, it) => s + it.price * it.count, 0),
@@ -609,7 +610,7 @@ function load(body) {
             house: typeof a.house === "string" ? a.house : "",
         };
     }).sort((a, b) => b.updatedAt - a.updatedAt);
-    GROUPS = [...new Set(ACCOUNTS.map(a => a.group))].sort();
+    GROUPS = [...new Set(ACCOUNTS.map(a => a.group).filter(Boolean))].sort();
     if (state.group !== "all" && !GROUPS.includes(state.group)) state.group = "all";
     lastLoad = Date.now();
     setStatus(`Loaded ${clock(lastLoad)} · refreshes every minute`);
@@ -618,7 +619,9 @@ function load(body) {
 
 function setStatus(text, bad) {
     $("status").textContent = text;
-    $("status").className = bad ? "sub bad" : "sub";
+    $("status").className = "sub";
+    $("conn").className = bad ? "conn bad" : "conn";
+    $("connTitle").textContent = bad ? "Problem" : "Connected";
 }
 
 // ── rendering ────────────────────────────────────────────────────────────────
@@ -639,7 +642,9 @@ const inGroup = a => state.group === "all" || a.group === state.group;
 function renderStats() {
     const list = ACCOUNTS.filter(inGroup);
     const sum = fn => list.reduce((s, a) => s + fn(a), 0);
-    $("stats").innerHTML = [
+    const live = list.filter(a => freshness(Date.now() - a.updatedAt) === "live").length;
+    const pct = list.length ? Math.round(live / list.length * 100) : 0;
+    $("stats").innerHTML = `<div class="stat"><span>Online / Total</span><b>${live} / ${list.length}<small>${pct}%</small></b><div class="bar"><i style="width:${pct}%"></i></div></div>` + [
         [sum(a => a.pets), "pets"],
         [sum(a => a.total), "items"],
         [usd(sum(a => a.value)), "total value", "money"],
@@ -647,7 +652,7 @@ function renderStats() {
             const out = list.filter(a => a.houses !== null && a.houses <= 1).length;
             return out ? [[out, `out of houses`, "out"]] : [];
         })(),
-    ].map(([v, l, cls]) => `<div class="stat"><b class="${cls || ""}">${v}</b><span>${l}</span></div>`).join("");
+    ].map(([v, l, cls]) => `<div class="stat"><span>${l}</span><b class="${cls || ""}">${v}</b></div>`).join("");
 }
 
 function renderGroups() {
@@ -692,7 +697,7 @@ function card(a) {
         <header class="acct-head">
             <img class="avatar" src="${esc(HEADSHOT(a.userId))}" alt="" data-initial="${esc(a.username[0] || "?")}">
             <div class="who">
-                <h2>${esc(a.username)}<span class="uid">#${a.userId}</span><span class="group">${esc(a.group)}</span>${a.house ? `<span class="house" title="House it trades">${esc(a.house)}</span>` : ""}</h2>
+                <h2>${esc(a.username)}<span class="uid">#${a.userId}</span>${a.group ? `<span class="group">${esc(a.group)}</span>` : ""}${a.house ? `<span class="house" title="House it trades">🏠 ${esc(a.house)}</span>` : `<span class="house none" title="No house reported yet">No house</span>`}</h2>
                 <div class="meta">
                     <span class="dot ${freshness(age)}" data-t="${a.updatedAt}"></span>
                     Last updated <time data-t="${a.updatedAt}" title="${esc(exact(a.updatedAt))}">${ago(age)}</time>
@@ -704,6 +709,7 @@ function card(a) {
                 ${houseStat(a.houses)}
                 <div><b class="money">${usd(a.value)}</b><span>value</span></div>
             </div>
+            <button type="button" class="rm" data-rm="${esc(a.username)}" title="Remove from this page" aria-label="Remove ${esc(a.username)}">✕</button>
         </header>
         ${a.items.length
             ? `<div class="grid">${shown.map(tile).join("")}</div>`
@@ -737,6 +743,8 @@ document.addEventListener("click", e => {
     if (!password) return;
     const g = e.target.closest("[data-group]");
     if (g) { state.group = g.dataset.group; return render(); }
+    const rm = e.target.closest("[data-rm]");
+    if (rm) return removeAccount(rm.dataset.rm, rm);
     const more = e.target.closest(".more");
     if (more) {
         const u = more.dataset.user;
@@ -744,6 +752,21 @@ document.addEventListener("click", e => {
         renderAccounts();
     }
 });
+
+// Asked twice, since it can't be undone (a running script does put the account back on its next report).
+async function removeAccount(name, btn) {
+    if (!confirm(`Remove ${name} from the inventory page?`)) return;
+    if (!confirm(`Are you sure? ${name} will be deleted from the dashboard.
+(If its script is still running, it comes back on its next report.)`)) return;
+    btn.disabled = true;
+    const r = await post("/api/accounts/delete", { username: name });
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    if (r.kind !== "ok") { btn.disabled = false; return alert("Couldn't remove it: " + failText(r)); }
+    ACCOUNTS = ACCOUNTS.filter(a => a.username !== name);
+    GROUPS = [...new Set(ACCOUNTS.map(a => a.group).filter(Boolean))].sort();
+    if (state.group !== "all" && !GROUPS.includes(state.group)) state.group = "all";
+    render();
+}
 
 // Broken pictures: a letter instead of a headshot, "no image" instead of an item.
 document.addEventListener("error", e => {
@@ -903,6 +926,8 @@ function showView(v) {
     $("invView").hidden = v !== "inv";
     $("stats").hidden = v !== "inv";
     $("setView").hidden = v !== "set";
+    $("pageTitle").textContent = v === "set" ? "Settings" : "Inventory Overview";
+    $("pageSub").textContent = v === "set" ? "Messages, houses and accounts the script loads" : "Pets and items on every account";
     if (v !== "set") return;
     if (!S.loaded) loadSettings(); else renderSettings();
 }
@@ -1005,7 +1030,7 @@ function accountsTab() {
     const groups = Object.keys(S.doc.groups);
     let html = `<div class="card"><div class="s-row">
         <label class="search">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8193a8" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#737373" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
             <input id="sq" type="search" placeholder="Search accounts or houses" autocomplete="off" spellcheck="false" value="${esc(S.q)}">
         </label>
         <button class="btn" data-act="addGroup">+ Add group</button>
