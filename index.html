@@ -171,6 +171,10 @@ h1 { margin: 0; font-size: 32px; font-weight: 700; }
 .acct-stats div { text-align: right; }
 .acct-stats b { display: block; font-size: 18px; font-weight: 600; }
 .acct-stats b.money { color: var(--money); }
+.house {
+    font-size: 12.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; margin-left: 6px; vertical-align: middle;
+    background: rgba(240,162,58,.14); color: var(--amber);
+}
 .acct-stats b.out, .stat b.out { color: var(--red); }
 .acct-stats b.unknown { color: var(--muted); }
 .acct-stats span { font-size: 12.5px; color: var(--muted); }
@@ -602,6 +606,7 @@ function load(body) {
             value: items.reduce((s, it) => s + it.price * it.count, 0),
             // houses still owned, 1 = only the base house left; null = this PC's script.lua is older
             houses: Number.isInteger(a.houses) ? a.houses : null,
+            house: typeof a.house === "string" ? a.house : "",
         };
     }).sort((a, b) => b.updatedAt - a.updatedAt);
     GROUPS = [...new Set(ACCOUNTS.map(a => a.group))].sort();
@@ -687,7 +692,7 @@ function card(a) {
         <header class="acct-head">
             <img class="avatar" src="${esc(HEADSHOT(a.userId))}" alt="" data-initial="${esc(a.username[0] || "?")}">
             <div class="who">
-                <h2>${esc(a.username)}<span class="uid">#${a.userId}</span><span class="group">${esc(a.group)}</span></h2>
+                <h2>${esc(a.username)}<span class="uid">#${a.userId}</span><span class="group">${esc(a.group)}</span>${a.house ? `<span class="house" title="House it trades">${esc(a.house)}</span>` : ""}</h2>
                 <div class="meta">
                     <span class="dot ${freshness(age)}" data-t="${a.updatedAt}"></span>
                     Last updated <time data-t="${a.updatedAt}" title="${esc(exact(a.updatedAt))}">${ago(age)}</time>
@@ -954,11 +959,6 @@ function allAccounts() {
     return out;
 }
 const setNames = () => ["Default", ...Object.keys(S.doc.message_sets).filter(s => s !== "Default").sort(ci)];
-function houseNames() {
-    const s = new Set(Object.keys(S.doc.house_adverts));
-    for (const { a } of allAccounts()) if (a.house.trim()) s.add(a.house.trim());
-    return [...s].sort(ci);
-}
 function usage(field) {          // field value -> [account names]
     const m = {};
     for (const { name, a } of allAccounts()) (m[a[field].trim ? a[field].trim() : a[field]] ??= []).push(name);
@@ -1040,7 +1040,6 @@ function accountsTab() {
         </section>`;
     }
     if (S.sel.size) html += bulkBar(sets, groups);
-    html += `<datalist id="houseList">${houseNames().map(h => `<option value="${esc(h)}">`).join("")}</datalist>`;
     return html;
 }
 
@@ -1051,7 +1050,7 @@ function acctRow(n, a, sets) {
     let html = `<tr data-a="${esc(n)}">
         <td class="s-ck"><input type="checkbox" data-act="sel" ${S.sel.has(n) ? "checked" : ""}></td>
         <td><button class="s-link" data-act="renameAcct" title="Rename">${esc(n)}</button></td>
-        <td><input class="in" list="houseList" data-f="house" value="${esc(a.house)}" spellcheck="false">${note}</td>
+        <td>${houseSelect(a.house)}${note}</td>
         <td><input class="in s-num" type="number" min="0" step="any" data-f="min_accept" value="${esc(a.min_accept)}"></td>
         <td><select class="in" data-f="message_set">${sets.map(s =>
             `<option value="${esc(s)}" ${s === a.message_set ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></td>
@@ -1067,6 +1066,16 @@ function acctRow(n, a, sets) {
     return html;
 }
 
+// The houses on the Adverts tab; a house this account already has but that has no adverts stays listed so it isn't lost.
+function houseSelect(current, id) {
+    const cur = current.trim();
+    const list = Object.keys(S.doc.house_adverts).sort(ci);
+    const opts = [`<option value="" ${cur ? "" : "selected"}>${id ? "Pick a house" : "No house"}</option>`]
+        .concat(list.map(h => `<option value="${esc(h)}" ${h === cur ? "selected" : ""}>${esc(h)}</option>`));
+    if (cur && !list.includes(cur)) opts.push(`<option value="${esc(cur)}" selected>${esc(cur)} (no adverts)</option>`);
+    return `<select class="in" ${id ? `id="${id}"` : `data-f="house"`}>${opts.join("")}</select>`;
+}
+
 const houseNote = house => !house ? `<div class="s-note s-bad">No house</div>`
     : !S.doc.house_adverts[house] ? `<div class="s-note s-warn">No adverts</div>` : "";
 
@@ -1074,7 +1083,7 @@ function bulkBar(sets, groups) {
     const opts = list => list.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
     return `<div class="card s-bulk">
         <b>${S.sel.size} selected</b>
-        <span class="s-pair"><label>House<input class="in" id="bkHouse" list="houseList"></label><button class="btn small" data-act="bulk" data-k="house">Set</button></span>
+        <span class="s-pair"><label>House${houseSelect("", "bkHouse")}</label><button class="btn small" data-act="bulk" data-k="house">Set</button></span>
         <span class="s-pair"><label>Min accept<input class="in" id="bkMin" type="number" min="0" step="any"></label><button class="btn small" data-act="bulk" data-k="min">Set</button></span>
         <span class="s-pair"><label>Message set<select class="in" id="bkSet">${opts(sets)}</select></label><button class="btn small" data-act="bulk" data-k="set">Set</button></span>
         <span class="s-pair"><label>Group<select class="in" id="bkGroup">${opts(groups)}</select></label><button class="btn small" data-act="bulk" data-k="move">Move</button></span>
