@@ -471,7 +471,7 @@ const SHOW_FIRST = 18;           // tiles per account before "Show all"
 const LIVE_MS    = 10 * 60e3;    // green dot: reported within 10 min
 const RECENT_MS  = 2 * 3600e3;   // amber dot: within 2 h
 const MIN_PRICE  = 0.10;         // USD; cheaper items are never shown or counted
-const REFRESH_MS = 60e3;
+const REFRESH_MS = 10e3;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -549,6 +549,9 @@ function unlock(pw, body) {
     refreshTimer = setInterval(refresh, REFRESH_MS);
 }
 
+// Coming back to the tab: catch up right away instead of waiting for the next tick.
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+
 function lock(reason) {
     session++;
     password = null;
@@ -564,7 +567,7 @@ function lock(reason) {
 }
 
 async function refresh() {
-    if (!password) return;
+    if (!password || document.hidden) return;   // a background tab doesn't poll
     const mine = session;
     const r = await askWorker(password);
     if (mine !== session) return;
@@ -613,7 +616,7 @@ function load(body) {
     GROUPS = [...new Set(ACCOUNTS.map(a => a.group).filter(Boolean))].sort();
     if (state.group !== "all" && !GROUPS.includes(state.group)) state.group = "all";
     lastLoad = Date.now();
-    setStatus(`Loaded ${clock(lastLoad)} · refreshes every minute`);
+    setStatus(`Loaded ${clock(lastLoad)} · refreshes every 10 s`);
     render();
 }
 
@@ -831,12 +834,11 @@ const CAT_INFO = {
     values_source:       ["\"Do you use elve?\"", ""],
 };
 const DEFAULT_KEYS = ["suggestion_range_offset", "trade_message_delay", "dont_trade_for_more_than"];
-// dont_trade_for_more_than is still stored for old scripts, but nothing reads it any more, so it isn't shown.
-const SHOWN_KEYS = ["suggestion_range_offset", "trade_message_delay"];
+const SHOWN_KEYS = ["suggestion_range_offset", "trade_message_delay", "dont_trade_for_more_than"];
 const DEFAULT_INFO = {
     suggestion_range_offset:  ["Suggestion range", "When it suggests a pet from their inventory, it looks for one worth between the price and the price plus this."],
     trade_message_delay:      ["Message delay (s)", "Seconds between the lines of Trade opens."],
-    dont_trade_for_more_than: ["Don't trade above", "Kept for older script versions; the current script doesn't use it."],
+    dont_trade_for_more_than: ["Negotiation limit (s)", "Seconds a trade may sit below the price before the bot cancels it. Paused in the confirm stage and while they pick from inventory. Once their offer reaches the price this timer is gone, and they get 60s to accept or the trade is cancelled. Minimum 30."],
 };
 const WEBHOOKS = [
     ["no_houses", "No houses left", "Pinged when an account runs out of houses."],
