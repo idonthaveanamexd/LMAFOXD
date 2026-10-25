@@ -359,6 +359,48 @@ select.in { padding: 0 6px; }
 .s-drop input { display: none; }
 details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 12px; }
 
+/* ── item values ──────────────────────────────────────── */
+.iv-drop.over { border-color: var(--blue); background: rgba(46,168,245,.06); color: var(--ink); }
+.iv-drop.off { opacity: .45; cursor: not-allowed; }
+.iv-drop.off:hover { border-color: var(--line); }
+.iv-drop small { display: block; margin-top: 4px; font-size: 12.5px; color: var(--muted); }
+.iv-sum { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.iv-sum span { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--raised); color: var(--soft); text-transform: capitalize; }
+.iv-sum b { color: var(--ink); font-weight: 600; margin-left: 3px; }
+.iv-sum em { font-style: normal; font-weight: 600; margin-left: 4px; }
+.iv-up { color: var(--green); }
+.iv-down { color: var(--red); }
+.iv-h { margin: 14px 0 0; font-size: 14.5px; font-weight: 600; }
+.iv-acts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.s-msg .iv-acts .btn { margin: 0; }
+.iv-bar { margin-top: 12px; }
+.iv-bar .search { min-height: 38px; }
+.iv-sort { width: auto; flex: none; height: 38px; }
+.iv-tbl td { vertical-align: middle; }
+.iv-pic { width: 46px; }
+.iv-thumb { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 8px; background: var(--tile); object-fit: contain; padding: 3px; }
+.iv-thumb.neon { background: var(--tile-neon); }
+.iv-thumb.mega { background: var(--tile-mega); }
+.iv-nm { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.iv-var { display: inline-flex; align-items: center; gap: 2px; }
+.iv-var .b { width: 20px; height: 20px; font-size: 11px; }
+.iv-var span { margin-left: 4px; font-size: 12.5px; color: var(--muted); }
+.iv-cap { text-transform: capitalize; color: var(--soft); }
+.iv-price { font-weight: 600; color: var(--money); }
+.iv-dim { color: var(--muted); }
+.iv-mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 13px; }
+.iv-file { max-width: 220px; overflow-wrap: anywhere; }
+.s-tbl.iv-small { min-width: 480px; }
+.s-tbl small { color: var(--muted); font-size: 12px; }
+.iv-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; font-size: 13.5px; color: var(--muted); }
+.iv-foot:empty { display: none; }
+.iv-more {
+    margin-top: 14px; border: 1px solid var(--line); background: var(--raised); border-radius: 10px;
+    padding: 7px 14px; font-size: 13.5px; cursor: pointer; color: var(--ink); font-weight: 600;
+}
+.iv-more:hover { border-color: #3a4a60; }
+.iv-foot span { margin-top: 14px; }
+
 @media (max-width: 860px) {
     .s-cols { grid-template-columns: 1fr; }
     .s-sets { position: static; }
@@ -415,6 +457,7 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
         <nav class="nav" id="nav">
             <button type="button" class="on" data-view="inv"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg>Inventory</button>
             <button type="button" data-view="set"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Settings</button>
+            <button type="button" data-view="items"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5"/></svg>Item Values</button>
         </nav>
         <button class="lock" id="lockBtn" type="button" title="Hide everything and ask for the password again">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Lock
@@ -452,6 +495,45 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
         <main id="setBody"></main>
     </div>
 
+    <!-- Item Values: the items.json every script prices by. script.lua fetches it from the Worker. -->
+    <div class="wrap" id="itemsView" hidden>
+        <div class="stats" id="ivStats"></div>
+        <div id="ivMsg"></div>
+        <section class="card">
+            <h2>Upload a new list</h2>
+            <p class="s-hint">Pick the new items.json. It's checked and compared with the list in use right here first;
+                nothing is sent until you press Upload. Every script switches to the new list by itself, no restart needed.</p>
+            <label class="s-drop iv-drop" id="ivDrop">
+                <input id="ivFile" type="file" accept=".json,application/json">
+                Drop items.json here or click to choose it
+                <small id="ivLimit"></small>
+            </label>
+            <div id="ivCheck"></div>
+        </section>
+        <section class="card">
+            <h2>Uploads</h2>
+            <p class="s-hint">The last 5 lists are kept. Switch back to one if a new list turns out wrong.</p>
+            <div id="ivHist"></div>
+        </section>
+        <section class="card">
+            <h2>Price list <span class="s-pill" id="ivCount" hidden></span></h2>
+            <div class="s-row iv-bar" id="ivBar" hidden>
+                <div class="groups" id="ivTypes" role="group" aria-label="Item type"></div>
+                <label class="search">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#737373" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+                    <input id="ivQ" type="search" placeholder="Search items, e.g. shadow dragon mega fly" autocomplete="off" spellcheck="false">
+                </label>
+                <select class="in iv-sort" id="ivSort" aria-label="Sort">
+                    <option value="price">Highest price</option>
+                    <option value="cheap">Lowest price</option>
+                    <option value="name">Name</option>
+                </select>
+            </div>
+            <div id="ivTable"></div>
+            <div class="iv-foot" id="ivFoot"></div>
+        </section>
+    </div>
+
     </div></div>
     <div class="s-modal" id="modal" hidden><div class="s-dialog" id="dialog" role="dialog" aria-modal="true"></div></div>
 </div>
@@ -468,7 +550,7 @@ const HEADSHOT = id => `https://api.newstargeted.com/roblox/users/v1/avatar-head
 const ITEM_IMG = kind => `https://cdn.playadopt.me/items/${encodeURIComponent(kind)}.png`;
 
 const SHOW_FIRST = 18;           // tiles per account before "Show all"
-const LIVE_MS    = 10 * 60e3;    // green dot: reported within 10 min
+const LIVE_MS    = 10 * 60e3;    // green dot: script checked in within 10 min (it does every 5)
 const RECENT_MS  = 2 * 3600e3;   // amber dot: within 2 h
 const MIN_PRICE  = 0.10;         // USD; cheaper items are never shown or counted
 const REFRESH_MS = 10e3;
@@ -559,6 +641,7 @@ function lock(reason) {
     ACCOUNTS = []; GROUPS = [];
     state.open.clear();
     resetSettings();
+    resetItems();
     for (const id of ["stats", "groups", "accounts", "status"]) $(id).innerHTML = "";
     $("app").hidden = true;
     $("gate").hidden = false;
@@ -605,6 +688,9 @@ function load(body) {
         return {
             username: String(a.username), userId: Number(a.userId) || 0,
             group: /^other$/i.test(String(a.group || "").trim()) ? "" : String(a.group || "").trim(), updatedAt: (Number(a.updatedAt) || 0) + skew, items,
+            // seenAt: the script's last check-in (a report counts too). lastTradeAt: 0 = none recorded yet.
+            seenAt: Math.max(Number(a.seenAt) || 0, Number(a.updatedAt) || 0) + skew,
+            lastTradeAt: Number(a.lastTradeAt) ? Number(a.lastTradeAt) + skew : 0,
             pets:  items.filter(it => it.category === "pets").reduce((s, it) => s + it.count, 0),
             total: items.reduce((s, it) => s + it.count, 0),
             value: items.reduce((s, it) => s + it.price * it.count, 0),
@@ -612,7 +698,11 @@ function load(body) {
             houses: Number.isInteger(a.houses) ? a.houses : null,
             house: typeof a.house === "string" ? a.house : "",
         };
-    }).sort((a, b) => b.updatedAt - a.updatedAt);
+    }).sort((a, b) => {
+        // Online accounts first, then the most recent trade, then by name.
+        const live = x => freshness(Date.now() - x.seenAt) === "live" ? 1 : 0;
+        return live(b) - live(a) || b.lastTradeAt - a.lastTradeAt || a.username.localeCompare(b.username);
+    });
     GROUPS = [...new Set(ACCOUNTS.map(a => a.group).filter(Boolean))].sort();
     if (state.group !== "all" && !GROUPS.includes(state.group)) state.group = "all";
     lastLoad = Date.now();
@@ -645,7 +735,7 @@ const inGroup = a => state.group === "all" || a.group === state.group;
 function renderStats() {
     const list = ACCOUNTS.filter(inGroup);
     const sum = fn => list.reduce((s, a) => s + fn(a), 0);
-    const live = list.filter(a => freshness(Date.now() - a.updatedAt) === "live").length;
+    const live = list.filter(a => freshness(Date.now() - a.seenAt) === "live").length;
     const pct = list.length ? Math.round(live / list.length * 100) : 0;
     $("stats").innerHTML = `<div class="stat"><span>Online / Total</span><b>${live} / ${list.length}<small>${pct}%</small></b><div class="bar"><i style="width:${pct}%"></i></div></div>` + [
         [sum(a => a.pets), "pets"],
@@ -695,15 +785,20 @@ function houseStat(n) {
 function card(a) {
     const open = state.open.has(a.username);
     const shown = open ? a.items : a.items.slice(0, SHOW_FIRST);
-    const age = Date.now() - a.updatedAt;
+    const now = Date.now();
+    const age = now - a.seenAt;
+    // The inventory is sent after each trade now, so the useful line is when it last traded.
+    const lastTrade = a.lastTradeAt
+        ? `Last trade <time data-t="${a.lastTradeAt}" title="${esc(exact(a.lastTradeAt))}">${ago(now - a.lastTradeAt)}</time>`
+        : `No trade recorded yet`;
     return `<article class="acct">
         <header class="acct-head">
             <img class="avatar" src="${esc(HEADSHOT(a.userId))}" alt="" data-initial="${esc(a.username[0] || "?")}">
             <div class="who">
                 <h2>${esc(a.username)}<span class="uid">#${a.userId}</span>${a.group ? `<span class="group">${esc(a.group)}</span>` : ""}${a.house ? `<span class="house" title="House it trades">🏠 ${esc(a.house)}</span>` : `<span class="house none" title="No house reported yet">No house</span>`}</h2>
                 <div class="meta">
-                    <span class="dot ${freshness(age)}" data-t="${a.updatedAt}"></span>
-                    Last updated <time data-t="${a.updatedAt}" title="${esc(exact(a.updatedAt))}">${ago(age)}</time>
+                    <span class="dot ${freshness(age)}" data-t="${a.seenAt}" title="Script last checked in ${esc(exact(a.seenAt))}"></span>
+                    ${lastTrade} · inventory <time data-t="${a.updatedAt}" title="${esc(exact(a.updatedAt))}">${ago(now - a.updatedAt)}</time>
                 </div>
             </div>
             <div class="acct-stats">
@@ -724,7 +819,7 @@ function card(a) {
 
 function renderAccounts() {
     if (!ACCOUNTS.length) {
-        $("accounts").innerHTML = `<div class="empty">No reports yet. An account shows up here about 10 seconds after script.lua starts on it.</div>`;
+        $("accounts").innerHTML = `<div class="empty">No reports yet. An account shows up here about a minute after script.lua starts on it.</div>`;
         return;
     }
     const q = state.q.trim().toLowerCase();
@@ -760,7 +855,7 @@ document.addEventListener("click", e => {
 async function removeAccount(name, btn) {
     if (!confirm(`Remove ${name} from the inventory page?`)) return;
     if (!confirm(`Are you sure? ${name} will be deleted from the dashboard.
-(If its script is still running, it comes back on its next report.)`)) return;
+(If its script is still running, it comes back within about 5 minutes.)`)) return;
     btn.disabled = true;
     const r = await post("/api/accounts/delete", { username: name });
     if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
@@ -922,14 +1017,21 @@ const failText = r => r.kind === "offline" ? "can't reach the dashboard server"
     : r.kind === "locked" ? `locked out for ${waitWords(r.retryAfter)}` : r.detail;
 
 // ── switching pages ──────────────────────────────────────────────────────────
+const VIEW_TITLES = {
+    inv: ["Inventory Overview", "Pets and items on every account"],
+    set: ["Settings", "Messages, houses and accounts the script loads"],
+    items: ["Item Values", "The price list every script trades by"],
+};
 function showView(v) {
+    if (!VIEW_TITLES[v]) v = "inv";
     S.view = v;
     $("nav").querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.view === v));
     $("invView").hidden = v !== "inv";
     $("stats").hidden = v !== "inv";
     $("setView").hidden = v !== "set";
-    $("pageTitle").textContent = v === "set" ? "Settings" : "Inventory Overview";
-    $("pageSub").textContent = v === "set" ? "Messages, houses and accounts the script loads" : "Pets and items on every account";
+    $("itemsView").hidden = v !== "items";
+    [$("pageTitle").textContent, $("pageSub").textContent] = VIEW_TITLES[v];
+    if (v === "items") return openItems();
     if (v !== "set") return;
     if (!S.loaded) loadSettings(); else renderSettings();
 }
@@ -2027,6 +2129,532 @@ $("modal").addEventListener("drop", e => {
     e.preventDefault();
     readImportFiles([...e.dataTransfer.files]);
 });
+</script>
+
+<script>
+// ══ Item Values page ════════════════════════════════════════════════════════
+// The items.json every script prices trades by. A file dropped here is read and
+// compared with the list in use right here in the browser; nothing leaves it until
+// Upload, which sends the file's exact bytes. Each script.lua learns of a new list
+// from its settings check (at every start, then every 5 minutes) and loads it in place.
+
+const IV_PAGE = 100;            // price list rows per "Show more"
+const IV_TOP = 10;              // biggest price changes listed before an upload
+const IV_NAMES_MAX = 300;       // names listed under "new" / "gone" / "all price changes"
+const IV_TYPE_ORDER = ["pet", "petwear", "transport", "toy", "stroller", "egg", "gift", "potion"];
+const IV_AGE = { newborn: "Newborn", junior: "Junior", pre_teen: "Pre-teen", teen: "Teen", post_teen: "Post-teen",
+    full_grown: "Full grown", reborn: "Reborn", twinkle: "Twinkle", luminous: "Luminous" };
+const IV_TYPE_ALIAS = { pets: "pet", petwears: "petwear", petaccessory: "petwear", petaccessories: "petwear", petwearids: "petwear",
+    potions: "potion", food: "potion", foods: "potion", eggs: "egg", toys: "toy", strollers: "stroller", transports: "transport",
+    vehicle: "transport", vehicles: "transport", car: "transport", cars: "transport", gifts: "gift" };
+const ivColl = new Intl.Collator(undefined, { sensitivity: "base", numeric: true });
+const ivN = n => Number(n).toLocaleString("en-US");
+const ivSize = n => n >= 1048576 ? `${(n / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
+const ivNum = v => typeof v === "number" ? v : typeof v === "string" && v.trim() !== "" ? Number(v) : NaN;
+const ivStr = v => typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "";
+// canonicalItemType in script.lua
+const ivType = v => { const s = ivStr(v).toLowerCase().replace(/[_\-\s]+/g, ""); return IV_TYPE_ALIAS[s] || s; };
+
+const IV = {};
+function resetItems() {
+    Object.assign(IV, { loaded: false, busy: false, loadErr: "", info: null, list: null, listVersion: "", listBusy: false,
+        listErr: "", pending: null, msg: null, q: "", type: "all", sort: "price", shown: IV_PAGE });
+    for (const id of ["ivStats", "ivMsg", "ivCheck", "ivHist", "ivTypes", "ivTable", "ivFoot"]) $(id).innerHTML = "";
+    $("ivQ").value = "";
+    $("ivSort").value = "price";
+    $("ivFile").value = "";
+}
+resetItems();
+
+// ── reading a list ───────────────────────────────────────────────────────────
+// The fields script.lua reads (normalizeItemEntry): type, name, price, pumping, fly/ride.
+function ivEntry(e) {
+    const p = isObj(e.properties) ? e.properties : {};
+    const name = [e.name, e.baseName, p.baseName, p.name, p.realName, e.realName].map(ivStr).find(Boolean) || "";
+    const real = ivStr(e.realName ?? p.realName);
+    const price = Number.isFinite(ivNum(e.price)) ? ivNum(e.price) : ivNum(p.price);
+    const avg = ivNum(e.avgPrice);
+    const id = e.id ?? e.productId ?? e.product_id ?? p.id ?? p.productId ?? p.product_id;
+    const fly = e.fly === true || e.flyable === true || p.fly === true || p.flyable === true;
+    const ride = e.ride === true || e.rideable === true || p.ride === true || p.rideable === true;
+    const form = e.pumping === "mega_neon" ? "mega" : e.pumping === "neon" ? "neon" : "normal";
+    const age = ivStr(e.age ?? p.age);
+    const type = ivType(e.type ?? e.category ?? p.type ?? p.category);
+    return {
+        // one item = one name in one form, fly/ride and age, whatever its listing id
+        key: [type, (real || name).toLowerCase(), form, fly ? 1 : 0, ride ? 1 : 0, age].join("|"),
+        name, real, type, form, fly, ride, age, rare: ivStr(e.rare ?? p.rare),
+        price: Number.isFinite(price) && price >= 0 ? price : null,
+        avg: Number.isFinite(avg) && avg >= 0 ? avg : null,
+        img: typeof e.imageUri === "string" && /^https:\/\/[^\s"'<>\\]+$/.test(e.imageUri) ? e.imageUri : "",
+        search: [name, real, ivStr(id), form === "normal" ? "" : form, fly ? "fly" : "", ride ? "ride" : "",
+            age.replace(/_/g, " "), type].join(" ").toLowerCase(),
+    };
+}
+
+// The whole file, the way the script will see it. { items, total, priced, warn } or { error }.
+function ivRead(buf) {
+    let text;
+    try { text = new TextDecoder("utf-8", { fatal: true }).decode(buf); }   // drops a BOM, like the script
+    catch { return { error: "isn't a text file (it isn't UTF-8)" }; }
+    let data;
+    try { data = JSON.parse(text); } catch (err) { return { error: `isn't valid JSON (${err.message})` }; }
+    if (!Array.isArray(data)) return { error: isObj(data) ? "is a JSON object, but items.json is a list: [ {…}, {…} ]" : "isn't a list of items" };
+    if (!data.length) return { error: "is an empty list" };
+    const items = [], seen = new Set();
+    let notObj = 0, noName = 0, noType = 0, noPrice = 0, dup = 0;
+    for (const e of data) {
+        if (!isObj(e)) { notObj++; continue; }
+        const it = ivEntry(e);
+        if (!it.name) noName++;
+        if (!it.type) noType++;
+        if (it.price === null) noPrice++;
+        if (seen.has(it.key)) dup++; else seen.add(it.key);
+        items.push(it);
+    }
+    const good = items.filter(it => it.name && it.type && it.price !== null).length;
+    if (good < data.length / 2) {
+        return { error: `doesn't look like items.json: only ${ivN(good)} of its ${ivN(data.length)} entries have a name, a type and a price` };
+    }
+    const warn = [];
+    if (notObj) warn.push(`${plural(notObj, "entry")} in the list ${notObj === 1 ? "isn't an item" : "aren't items"}; the scripts skip them`);
+    if (noPrice) warn.push(`${plural(noPrice, "item")} ${noPrice === 1 ? "has" : "have"} no price, so the scripts can't value ${noPrice === 1 ? "it" : "them"}`);
+    if (noName) warn.push(`${plural(noName, "item")} ${noName === 1 ? "has" : "have"} no name`);
+    if (noType) warn.push(`${plural(noType, "item")} ${noType === 1 ? "has" : "have"} no type`);
+    if (dup) warn.push(`${plural(dup, "item")} ${dup === 1 ? "is" : "are"} in the list twice (same name, form, fly/ride and age)`);
+    return { items, total: data.length, priced: items.length - noPrice, warn };
+}
+
+async function ivSha(buf) {
+    const h = new Uint8Array(await crypto.subtle.digest("SHA-256", buf));
+    return Array.from(h, b => b.toString(16).padStart(2, "0")).join("");
+}
+
+function ivDiff(oldList, newList) {
+    const index = list => { const m = new Map(); for (const it of list) if (!m.has(it.key)) m.set(it.key, it); return m; };
+    const before = index(oldList), after = index(newList);
+    const added = [], removed = [], changed = [];
+    let up = 0;
+    for (const [k, it] of after) {
+        const was = before.get(k);
+        if (!was) { added.push(it); continue; }
+        if (was.price !== null && it.price !== null && Math.abs(it.price - was.price) >= 0.005) {
+            changed.push({ it, was: was.price, now: it.price });
+            if (it.price > was.price) up++;
+        }
+    }
+    for (const [k, it] of before) if (!after.has(k)) removed.push(it);
+    changed.sort((a, b) => Math.abs(b.now - b.was) - Math.abs(a.now - a.was));
+    const byPrice = (a, b) => (b.price ?? -1) - (a.price ?? -1);
+    added.sort(byPrice); removed.sort(byPrice);
+    return { added, removed, changed, up, down: changed.length - up };
+}
+
+function ivTypeCounts(items) {
+    const m = new Map();
+    for (const it of items) m.set(it.type || "?", (m.get(it.type || "?") || 0) + 1);
+    const rank = t => { const i = IV_TYPE_ORDER.indexOf(t); return i < 0 ? 99 : i; };
+    return [...m].sort((a, b) => rank(a[0]) - rank(b[0]) || ivColl.compare(a[0], b[0]));
+}
+
+// ── talking to the Worker ────────────────────────────────────────────────────
+async function ivFailure(res) {
+    let body = null;
+    try { body = await res.json(); } catch {}
+    if (res.status === 401) return { kind: "wrong" };
+    if (res.status === 429) return { kind: "locked", retryAfter: (body && body.retryAfter) || 900 };
+    return { kind: "error", detail: (body && body.error) || `HTTP ${res.status}` };
+}
+
+// The bytes of one kept list.
+async function ivFetchFile(version) {
+    try {
+        const res = await fetch(API + "/api/items/download", {
+            method: "POST", headers: { "Content-Type": "application/json" }, cache: "no-store",
+            body: JSON.stringify({ password, version }),
+        });
+        if (!res.ok) return ivFailure(res);
+        return { kind: "ok", buf: await res.arrayBuffer(), version: res.headers.get("X-Items-Version") || version };
+    } catch {
+        return { kind: "offline" };
+    }
+}
+
+const ivFailText = r => r.kind === "error" && r.detail === "not found"
+    ? "the Worker doesn't have the item list routes yet; deploy the new worker.js" : failText(r);
+
+async function loadItemInfo() {
+    if (IV.busy) return;
+    IV.busy = true; IV.loadErr = "";
+    renderItems();
+    const mine = session;
+    const r = await post("/api/items/info");
+    if (mine !== session) return;
+    IV.busy = false;
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    if (r.kind !== "ok") { IV.loadErr = ivFailText(r); return renderItems(); }
+    IV.loaded = true;
+    IV.info = r.body;
+    renderItems();
+    loadCurrentList();
+}
+
+// The list in use, for the price table and to compare a new file with.
+async function loadCurrentList() {
+    const cur = IV.info && IV.info.current;
+    if (!cur || IV.listBusy || (IV.list && IV.listVersion === cur.version)) return;
+    IV.listBusy = true; IV.listErr = "";
+    renderIvTable();
+    const mine = session;
+    const r = await ivFetchFile(cur.version);
+    if (mine !== session) return;
+    IV.listBusy = false;
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    if (r.kind !== "ok") IV.listErr = ivFailText(r);
+    else {
+        const read = ivRead(r.buf);
+        if (read.error) IV.listErr = `the stored file ${read.error}`;
+        else { IV.list = read.items; IV.listVersion = r.version; }
+    }
+    renderItems();
+    loadCurrentList();          // the list in use changed while this one was on its way
+}
+
+// ── picking, checking and uploading a file ───────────────────────────────────
+async function ivPick(files) {
+    const file = files.find(f => /\.json$/i.test(f.name)) || files[0];
+    if (!file || !IV.info || (IV.pending && IV.pending.state === "uploading")) return;
+    if (!IV.info.kvBound) return renderIvMsg();
+    const token = {}, mine = session;
+    IV.pending = { token, name: file.name, size: file.size, state: "reading" };
+    IV.msg = null;
+    renderIvMsg(); renderIvCheck();
+    const bad = error => { Object.assign(IV.pending, { state: "bad", error }); renderIvCheck(); };
+    if (file.size > IV.info.maxBytes) return bad(`is ${ivSize(file.size)}; the Worker takes up to ${ivSize(IV.info.maxBytes)}`);
+    if (!(window.crypto && crypto.subtle)) return bad("can't be checked here: open the dashboard over https");
+    let buf, read, version;
+    try {
+        buf = await file.arrayBuffer();
+        if (mine !== session || IV.pending?.token !== token) return;
+        const hashing = ivSha(buf);
+        read = ivRead(buf);
+        version = await hashing;
+    } catch (err) {
+        if (mine !== session || IV.pending?.token !== token) return;
+        return bad(`couldn't be read (${err && err.message || err})`);
+    }
+    if (mine !== session || IV.pending?.token !== token) return;
+    if (read.error) return bad(read.error);
+    Object.assign(IV.pending, { state: "ready", buf, version, read });
+    renderIvCheck();
+}
+
+async function ivUpload() {
+    const p = IV.pending, cur = IV.info && IV.info.current;
+    if (!p || p.state !== "ready") return;
+    if (cur && cur.count && p.read.items.length < cur.count / 2
+        && !confirm(`This file has ${ivN(p.read.items.length)} items, less than half of the ${ivN(cur.count)} in the list in use. Upload it anyway?`)) return;
+    p.state = "uploading";
+    renderIvCheck();
+    const mine = session;
+    let res = null, body = null;
+    try {
+        res = await fetch(API + "/api/items/upload", {
+            method: "POST", cache: "no-store", body: p.buf,
+            headers: {
+                "Content-Type": "application/json", "X-Password": encodeURIComponent(password), "X-Items-Version": p.version,
+                "X-Items-Count": String(p.read.items.length), "X-Items-Name": encodeURIComponent(p.name),
+            },
+        });
+        try { body = await res.json(); } catch {}
+    } catch {}
+    if (mine !== session || IV.pending !== p) return;
+    if (res && res.ok && body && body.current) {
+        IV.info = body;
+        IV.list = p.read.items; IV.listVersion = p.version; IV.listErr = "";
+        IV.pending = null; IV.shown = IV_PAGE;
+        IV.msg = { kind: "ok", html: `Uploaded <b>${esc(p.name)}</b> (${ivN(p.read.items.length)} items). Every running script switches to it
+            at its next settings check, within 5 minutes, and a script that starts or hops servers loads it straight away.` };
+        return renderItems();
+    }
+    if (res && res.status === 401) return lock("The password was changed. Enter the new one.");
+    p.state = "ready";
+    renderIvCheck();
+    ivSay("bad", !res ? `Couldn't reach the dashboard server, so nothing changed. If your connection is fine, try once more:
+            on the free plan a big upload can now and then run past the Worker's time limit.`
+        : `Upload failed: ${esc(res.status === 429 ? `locked out for ${waitWords((body && body.retryAfter) || 900)}`
+            : (body && body.error) || `HTTP ${res.status}`)}`);
+}
+
+async function ivRestore(el) {
+    const h = IV.info && IV.info.history.find(x => x.version === el.dataset.v);
+    if (!h || !confirm(`Go back to ${h.name} from ${exact(h.uploadedAt)}? Every script switches to it within 5 minutes.`)) return;
+    el.disabled = true;
+    const mine = session;
+    const r = await post("/api/items/restore", { version: h.version });
+    if (mine !== session) return;
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    if (r.kind !== "ok") { el.disabled = false; return ivSay("bad", `Couldn't switch to it: ${esc(ivFailText(r))}`); }
+    IV.info = r.body; IV.shown = IV_PAGE;
+    IV.msg = { kind: "ok", html: `Back to <b>${esc(h.name)}</b> from ${esc(exact(h.uploadedAt))}. Every script switches to it within 5 minutes.` };
+    renderItems();
+    loadCurrentList();
+}
+
+async function ivDownload(el) {
+    const h = IV.info && IV.info.history.find(x => x.version === el.dataset.v);
+    if (!h) return;
+    el.disabled = true;
+    const mine = session;
+    const r = await ivFetchFile(h.version);
+    if (mine !== session) return;
+    el.disabled = false;
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    if (r.kind !== "ok") return ivSay("bad", `Couldn't download it: ${esc(ivFailText(r))}`);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([r.buf], { type: "application/json" }));
+    a.download = h.name || "items.json";
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 60e3);
+}
+
+// ── rendering ────────────────────────────────────────────────────────────────
+const ivBadges = it => (it.form === "mega" ? `<i class="b m" title="Mega neon">M</i>` : it.form === "neon" ? `<i class="b n" title="Neon">N</i>` : "")
+    + (it.fly ? `<i class="b f" title="Fly">F</i>` : "") + (it.ride ? `<i class="b r" title="Ride">R</i>` : "");
+const ivAge = it => it.age ? IV_AGE[it.age] || it.age.replace(/_/g, " ") : "";
+const ivLabel = it => {
+    const v = [it.form === "mega" ? "mega neon" : it.form === "neon" ? "neon" : "", it.fly ? "fly" : "", it.ride ? "ride" : "", ivAge(it).toLowerCase()].filter(Boolean);
+    return (it.name || "?") + (v.length ? ` (${v.join(", ")})` : "");
+};
+const ivNameCell = it => `<div class="iv-nm">${esc(it.name || "?")}<span class="iv-var">${ivBadges(it)}${it.age ? `<span>${esc(ivAge(it))}</span>` : ""}</span></div>`;
+const ivMoney = n => n === null ? `<span class="s-warn">no price</span>` : usd(n);
+
+function ivSay(kind, html) { IV.msg = { kind, html }; renderIvMsg(); }
+
+function renderItems() { renderIvStats(); renderIvMsg(); renderIvCheck(); renderIvHist(); renderIvTypes(); renderIvTable(); }
+
+function renderIvStats() {
+    const info = IV.info, c = info && info.current;
+    const tile = (label, value, title) => `<div class="stat"${title ? ` title="${esc(title)}"` : ""}><span>${label}</span><b>${value}</b></div>`;
+    $("ivStats").innerHTML = !info ? "" : !c ? tile("Item list", "None yet") : [
+        tile("Items", c.count != null ? ivN(c.count) : IV.list && IV.listVersion === c.version ? ivN(IV.list.length) : "—"),
+        tile("Uploaded", `<time data-t="${Number(c.uploadedAt)}">${esc(ago(Date.now() - c.uploadedAt))}</time>`, exact(c.uploadedAt)),
+        tile("File", esc(ivSize(c.size)), c.name),
+        tile("Version", `<span class="iv-mono">${esc(c.version.slice(0, 12))}</span>`, `${c.version}\n(SHA-256 of the file, the same as the item connector uses)`),
+    ].join("");
+    const usable = !!(info && info.kvBound);
+    $("ivFile").disabled = !usable;
+    $("ivDrop").classList.toggle("off", !usable);
+    $("ivLimit").textContent = info ? `A JSON list of items, up to ${ivSize(info.maxBytes)}` : "";
+}
+
+function renderIvMsg() {
+    const parts = [];
+    if (IV.loadErr) {
+        parts.push(`<div class="s-msg bad">Couldn't load the item list details: ${esc(IV.loadErr)}.
+            <br><button class="btn small" type="button" data-iv="retry">Try again</button></div>`);
+    } else if (!IV.info) {
+        parts.push(`<div class="empty">Loading…</div>`);
+    } else if (!IV.info.kvBound) {
+        parts.push(`<div class="s-msg bad"><b>One-time setup:</b> the Worker has nowhere to keep the file yet. In Cloudflare go to
+            <b>Storage &amp; Databases → KV → Create</b> and make a namespace (any name). Then open this Worker →
+            <b>Settings → Bindings → Add → KV namespace</b>, set the variable name to <code>ITEMS</code>, pick that namespace and deploy.
+            Reload this page afterwards.</div>`);
+    } else if (!IV.info.current) {
+        parts.push(`<div class="s-msg">No list uploaded yet. Until there is one, every script keeps using the item connector's
+            list (or the items.json on its PC).</div>`);
+    }
+    if (IV.msg) parts.push(`<div class="s-msg ${IV.msg.kind === "info" ? "" : IV.msg.kind}">${IV.msg.html}</div>`);
+    $("ivMsg").innerHTML = parts.join("");
+}
+
+function ivDiffHtml(d) {
+    if (!d.added.length && !d.removed.length && !d.changed.length) {
+        return `<p class="s-hint">Same items at the same prices as the list in use.</p>`;
+    }
+    const more = (n, shown) => n > shown ? `<p class="s-hint">…and ${ivN(n - shown)} more.</p>` : "";
+    const names = (list, title) => !list.length ? "" : `<details><summary>${title} (${ivN(list.length)})</summary>
+        <p class="s-hint">${list.slice(0, IV_NAMES_MAX).map(it => `${esc(ivLabel(it))} ${ivMoney(it.price)}`).join(" · ")}</p>
+        ${more(list.length, IV_NAMES_MAX)}</details>`;
+    const row = c => `<tr><td>${ivNameCell(c.it)}</td><td class="s-end">${usd(c.was)}</td><td class="s-end">${usd(c.now)}</td>
+        <td class="s-end ${c.now > c.was ? "iv-up" : "iv-down"}">${c.now > c.was ? "+" : "−"}${usd(Math.abs(c.now - c.was))}${c.was > 0
+            ? ` <small>${c.now > c.was ? "+" : "−"}${ivN(Math.round(Math.abs(c.now - c.was) / c.was * 100))}%</small>` : ""}</td></tr>`;
+    const table = list => `<div class="s-scroll"><table class="s-tbl iv-small"><thead><tr><th>Item</th><th class="s-end">Now</th>
+        <th class="s-end">New</th><th class="s-end">Change</th></tr></thead><tbody>${list.map(row).join("")}</tbody></table></div>`;
+    return `<div class="iv-sum">
+            <span>Price changes <b>${ivN(d.changed.length)}</b>${d.changed.length
+                ? ` <em class="iv-up">▲ ${ivN(d.up)}</em> <em class="iv-down">▼ ${ivN(d.down)}</em>` : ""}</span>
+            <span>New items <b>${ivN(d.added.length)}</b></span>
+            <span>Gone <b>${ivN(d.removed.length)}</b></span>
+        </div>
+        ${d.changed.length ? `<h3 class="iv-h">Biggest price changes</h3>${table(d.changed.slice(0, IV_TOP))}` : ""}
+        ${d.changed.length > IV_TOP ? `<details><summary>All price changes (${ivN(d.changed.length)})</summary>
+            ${table(d.changed.slice(0, IV_NAMES_MAX))}${more(d.changed.length, IV_NAMES_MAX)}</details>` : ""}
+        ${names(d.added, "New items")}
+        ${names(d.removed, "Gone from the list")}`;
+}
+
+function renderIvCheck() {
+    const p = IV.pending, el = $("ivCheck");
+    if (!p) return void (el.innerHTML = "");
+    const head = `<b>${esc(p.name)}</b> · ${esc(ivSize(p.size))}`;
+    if (p.state === "reading") return void (el.innerHTML = `<div class="s-msg">${head} · checking…</div>`);
+    if (p.state === "bad") {
+        return void (el.innerHTML = `<div class="s-msg bad">${head}<br>This file ${esc(p.error)}. Nothing was uploaded.
+            <br><button class="btn small" type="button" data-iv="cancel">OK</button></div>`);
+    }
+    const r = p.read, cur = IV.info && IV.info.current, same = !!cur && cur.version === p.version, busy = p.state === "uploading";
+    let compare;
+    if (same) compare = `<p class="s-hint">This is exactly the list the scripts use now, so there's nothing to upload.</p>`;
+    else if (!cur) compare = `<p class="s-hint">The first list on the site, so there's nothing to compare it with.</p>`;
+    else if (IV.listErr) compare = `<p class="s-hint s-warn">Can't compare it with the list in use: that one couldn't be loaded (${esc(IV.listErr)}).</p>`;
+    else if (!IV.list || IV.listVersion !== cur.version) compare = `<p class="s-hint">Comparing with the list in use…</p>`;
+    else {
+        if (p.diffFor !== IV.listVersion) { p.diff = ivDiff(IV.list, r.items); p.diffFor = IV.listVersion; }
+        compare = ivDiffHtml(p.diff);
+    }
+    const kept = !same && IV.info.history.some(h => h.version === p.version);
+    el.innerHTML = `<div class="s-msg${r.warn.length ? "" : " ok"}">
+        ${head} · ${ivN(r.items.length)} items, ${ivN(r.priced)} with a price
+        <div class="iv-sum">${ivTypeCounts(r.items).map(([t, n]) => `<span>${esc(t)} <b>${ivN(n)}</b></span>`).join("")}</div>
+        ${r.warn.length ? `<ul class="s-list s-warn">${r.warn.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : ""}
+        ${kept ? `<p class="s-hint">This file is one of the earlier uploads below; uploading it makes it the list in use again.</p>` : ""}
+        ${compare}
+        <div class="iv-acts">
+            ${same ? "" : `<button class="btn primary" type="button" data-iv="upload"${busy ? " disabled" : ""}>${busy ? "Uploading…" : "Upload and use it"}</button>`}
+            <button class="btn" type="button" data-iv="cancel"${busy ? " disabled" : ""}>${same ? "Close" : "Cancel"}</button>
+        </div></div>`;
+}
+
+function renderIvHist() {
+    const info = IV.info;
+    if (!info || !info.kvBound) return void ($("ivHist").innerHTML = "");
+    const cur = info.current && info.current.version;
+    const rows = info.history.map(h => `<tr>
+        <td>${esc(exact(h.uploadedAt))}<div class="s-note s-hint"><time data-t="${Number(h.uploadedAt)}">${esc(ago(Date.now() - h.uploadedAt))}</time></div></td>
+        <td class="iv-file">${esc(h.name)}</td>
+        <td class="s-end">${h.count != null ? ivN(h.count) : "—"}</td>
+        <td class="s-end">${esc(ivSize(h.size))}</td>
+        <td><span class="iv-mono" title="${esc(h.version)}">${esc(h.version.slice(0, 12))}</span></td>
+        <td class="s-end">${h.version === cur ? `<span class="s-pill">in use</span>`
+            : `<button class="btn small" type="button" data-iv="restore" data-v="${esc(h.version)}">Use this one</button>`}
+            <button class="btn small" type="button" data-iv="download" data-v="${esc(h.version)}">Download</button></td></tr>`).join("");
+    $("ivHist").innerHTML = rows ? `<div class="s-scroll"><table class="s-tbl"><thead><tr><th>Uploaded</th><th>File</th><th class="s-end">Items</th>
+        <th class="s-end">Size</th><th>Version</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`
+        : `<p class="nothing">Nothing uploaded yet.</p>`;
+}
+
+const ivReady = () => !!(IV.info && IV.info.current && IV.list && IV.listVersion === IV.info.current.version);
+
+function renderIvTypes() {
+    $("ivBar").hidden = !ivReady();
+    if (!ivReady()) return void ($("ivTypes").innerHTML = "");
+    const counts = ivTypeCounts(IV.list);
+    if (IV.type !== "all" && !counts.some(([t]) => t === IV.type)) IV.type = "all";
+    $("ivTypes").innerHTML = [["all", IV.list.length], ...counts].map(([t, n]) => `<button type="button" data-ivtype="${esc(t)}"
+        class="${t === IV.type ? "on" : ""}">${esc(t === "all" ? "All" : t)} <span class="n">${ivN(n)}</span></button>`).join("");
+}
+
+function ivFiltered() {
+    const words = IV.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const list = IV.list.filter(it => (IV.type === "all" || it.type === IV.type) && words.every(w => it.search.includes(w)));
+    const dear = (a, b) => (b.price ?? -1) - (a.price ?? -1);
+    const byName = (a, b) => ivColl.compare(a.name, b.name);
+    if (IV.sort === "cheap") list.sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity) || byName(a, b));
+    else if (IV.sort === "name") list.sort((a, b) => byName(a, b) || dear(a, b));
+    else list.sort((a, b) => dear(a, b) || byName(a, b));
+    return list;
+}
+
+function renderIvTable() {
+    const el = $("ivTable"), foot = $("ivFoot"), info = IV.info;
+    foot.innerHTML = "";
+    $("ivCount").hidden = !ivReady();
+    if (!info) return void (el.innerHTML = "");
+    if (!info.current) return void (el.innerHTML = `<p class="nothing">Once a list is uploaded, every item and its price shows up here.</p>`);
+    if (IV.listErr) {
+        return void (el.innerHTML = `<p class="nothing s-bad">Couldn't load the list: ${esc(IV.listErr)}.
+            <button class="btn small" type="button" data-iv="retryList">Try again</button></p>`);
+    }
+    if (!ivReady()) return void (el.innerHTML = `<div class="empty">Loading the list…</div>`);
+    $("ivCount").textContent = `${ivN(IV.list.length)} items`;
+    const list = ivFiltered();
+    if (!list.length) return void (el.innerHTML = `<p class="nothing">Nothing matches.</p>`);
+    const shown = list.slice(0, IV.shown);
+    el.innerHTML = `<div class="s-scroll"><table class="s-tbl iv-tbl"><thead><tr><th></th><th>Item</th><th>Type</th><th>Rarity</th>
+        <th class="s-end">Price</th><th class="s-end" title="avgPrice in items.json">Avg price</th></tr></thead><tbody>${shown.map(it => `<tr>
+        <td class="iv-pic">${it.img ? `<img class="iv-thumb ${it.form}" loading="lazy" decoding="async" alt="" src="${esc(it.img)}">`
+            : `<span class="iv-thumb ${it.form}"></span>`}</td>
+        <td>${ivNameCell(it)}</td>
+        <td class="iv-cap">${esc(it.type || "—")}</td>
+        <td class="iv-cap">${esc(it.rare.replace(/_/g, " ") || "—")}</td>
+        <td class="s-end iv-price">${ivMoney(it.price)}</td>
+        <td class="s-end iv-dim">${it.avg === null ? "—" : usd(it.avg)}</td></tr>`).join("")}</tbody></table></div>`;
+    const left = list.length - shown.length;
+    foot.innerHTML = `<span>Showing ${ivN(shown.length)} of ${ivN(list.length)}</span>${left
+        ? `<button class="iv-more" type="button" data-iv="more">Show ${ivN(Math.min(IV_PAGE, left))} more</button>` : ""}`;
+}
+
+// Called by showView when the tab opens.
+function openItems() {
+    if (!IV.loaded) return loadItemInfo();
+    renderItems();
+    loadCurrentList();
+}
+
+// ── wiring ───────────────────────────────────────────────────────────────────
+$("itemsView").addEventListener("click", e => {
+    const t = e.target.closest("[data-ivtype]");
+    if (t) { IV.type = t.dataset.ivtype; IV.shown = IV_PAGE; renderIvTypes(); return renderIvTable(); }
+    const b = e.target.closest("[data-iv]");
+    if (!b || b.disabled) return;
+    const acts = {
+        upload: ivUpload,
+        cancel: () => { IV.pending = null; renderIvCheck(); },
+        restore: () => ivRestore(b),
+        download: () => ivDownload(b),
+        more: () => { IV.shown += IV_PAGE; renderIvTable(); },
+        retry: loadItemInfo,
+        retryList: () => { IV.listErr = ""; loadCurrentList(); },
+    };
+    if (acts[b.dataset.iv]) acts[b.dataset.iv]();
+});
+$("ivFile").addEventListener("change", e => {
+    const files = [...e.target.files];
+    e.target.value = "";            // the same file can be picked again
+    if (files.length) ivPick(files);
+});
+$("ivQ").addEventListener("input", e => { IV.q = e.target.value; IV.shown = IV_PAGE; renderIvTable(); });
+$("ivSort").addEventListener("change", e => { IV.sort = e.target.value; IV.shown = IV_PAGE; renderIvTable(); });
+
+// A file dropped anywhere on this page is taken, so a near miss doesn't open the
+// file in the tab (and lose the password).
+const ivDropping = e => !!password && !$("itemsView").hidden && $("modal").hidden
+    && !!e.dataTransfer && [...e.dataTransfer.types].includes("Files");
+document.addEventListener("dragover", e => {
+    if (!ivDropping(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = IV.info && IV.info.kvBound ? "copy" : "none";
+    $("ivDrop").classList.add("over");
+});
+document.addEventListener("dragleave", e => { if (!e.relatedTarget) $("ivDrop").classList.remove("over"); });
+document.addEventListener("drop", e => {
+    $("ivDrop").classList.remove("over");
+    if (!ivDropping(e)) return;
+    e.preventDefault();
+    ivPick([...e.dataTransfer.files]);
+});
+
+// A picture that doesn't load leaves an empty square.
+$("itemsView").addEventListener("error", e => {
+    const img = e.target;
+    if (!(img instanceof HTMLImageElement) || !img.classList.contains("iv-thumb")) return;
+    const s = document.createElement("span");
+    s.className = img.className;
+    img.replaceWith(s);
+}, true);
 </script>
 </body>
 </html>
