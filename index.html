@@ -694,7 +694,7 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
                 <button type="button" class="btn" id="rsHPick">Choose files…</button>
                 <input type="file" id="rsHFile" accept=".lua,.json,.txt" multiple hidden>
             </div>
-            <textarea class="ta rs-hta" id="rsHText" rows="7" spellcheck="false" placeholder='return {furniture={["f-1"]={id="column_v2_plain", ...}, ...}, textures={...}, building_type="micro_2023", ...}'></textarea>
+            <textarea class="ta rs-hta" id="rsHText" rows="7" spellcheck="false" placeholder='Paste a house file: {"furnitures":[{"id":"column_v2_plain","cframe":[...]}, ...], "buildingType":"micro_2023", ...} or return {furniture={["f-1"]=...}, ...}'></textarea>
             <div class="rs-hfoot">
                 <div class="rs-hinfo" id="rsHInfo"></div>
                 <button type="button" class="btn" id="rsHClear">Clear</button>
@@ -3113,21 +3113,64 @@ const rsHouseUse = name => rsD().receivers.filter(r => r.house === name).length;
 const rsFileName = f => f.replace(/\.(lua|json|txt)$/i, "").replace(/[^A-Za-z0-9_ -]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
 const RS_MAX_FILE = 1.9e6;
 
-// A quick look inside a house file, the same thing the script's loadHouseFile reads
-// (one Lua table, or JSON). It only counts things; the script does the real parsing.
+// A quick look inside a house file, the same thing the script's loadHouseFile reads:
+// JSON (a "furnitures" list or a "furniture" table, whatever the file is called) or one
+// Lua table. It only counts things; the script does the real parsing.
 function rsParseHouse(text) {
     const s = text.trim();
     if (!s) return null;
-    if (!/^(return\b|[{[])/.test(s)) return { error: "That doesn't look like a house file. It should start with <code>return {</code>." };
+    if (!/^(return\b|[{[])/.test(s)) return { error: "That doesn't look like a house file. It should start with <code>{</code> or <code>return {</code>." };
     if (!/(\}|\]\])$/.test(s)) return { error: "The file looks cut off, it should end with <code>}</code>. Copy the whole file." };
-    const items = (s.match(/\[?"f-\d+"\]?\s*[=:]/g) || []).length;
-    if (!items) return { error: "No furniture found in it (no <code>[\"f-…\"]</code> entries)." };
     const bytes = new Blob([s]).size;
     if (bytes > RS_MAX_FILE) return { error: `It's ${rsSize(bytes)}, the most the dashboard keeps is ${rsSize(RS_MAX_FILE)}.` };
+    const json = rsJson(s);
+    return json ? rsJsonHouse(json, bytes) : rsLuaHouse(s, bytes);
+}
+
+// The JSON inside, the ways the script finds it: the whole file, `return [[ json ]]` or
+// `return json`, each also with one stray character at the end dropped.
+function rsJson(s) {
+    const body = /^\{|^\[/.test(s) ? s : (s.match(/^return\s*\[\[([\s\S]*)\]\]$/) || s.match(/^return\s+([{[][\s\S]*)$/) || [])[1];
+    if (!body) return null;
+    for (const t of [body, body.slice(0, -1)]) {
+        try { const d = JSON.parse(t); if (isObj(d)) return d; } catch {}
+    }
+    return null;
+}
+
+const rsTop5 = ids => {
+    const count = {};
+    for (const id of ids) if (typeof id === "string" && id) count[id] = (count[id] || 0) + 1;
+    return [Object.keys(count).length, Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 5)];
+};
+
+function rsJsonHouse(d, bytes) {
+    const list = Array.isArray(d.furnitures) ? d.furnitures : isObj(d.furniture) ? Object.values(d.furniture) : null;
+    if (!list) return { error: "No furniture found in it (no <code>furnitures</code> list or <code>furniture</code> table)." };
+    const items = list.filter(isObj);
+    if (!items.length) return { error: "Its furniture list is empty." };
+    // the script can only place an item with a 12-number cframe
+    if (!items.some(f => Array.isArray(f.cframe) && f.cframe.length === 12))
+        return { error: "None of its furniture has a position (<code>cframe</code>), so it can't be built." };
+    const type = d.building_type || d.buildingType;
+    if (typeof type !== "string" || !type) return { error: "It doesn't say which house to buy (no <code>buildingType</code>)." };
+    const [kinds, top] = rsTop5(items.map(f => f.id));
+    const tex = d.textures;
+    const rooms = Array.isArray(tex) ? new Set(tex.filter(isObj).map(t => t.room).filter(Boolean)).size : isObj(tex) ? Object.keys(tex).length : 0;
+    const music = isObj(d.music) && typeof d.music.name === "string" ? d.music.name : "";
+    return { type, items: items.length, kinds, rooms, top, music, bytes };
+}
+
+// A Lua table: counted by pattern, the script runs it for real.
+function rsLuaHouse(s, bytes) {
+    // a ["f-1"] = {...} table, or a furnitures = { {...}, ... } list (one cframe per item)
+    const items = (s.match(/\[?"f-\d+"\]?\s*[=:]/g) || []).length
+        || (/\bfurnitures"?\s*[=:]/.test(s) ? (s.match(/\bcframe"?\s*[=:]/g) || []).length : 0);
+    if (!items) return { error: "No furniture found in it (no <code>[\"f-…\"]</code> entries or <code>furnitures</code> list)." };
     const count = {};
     for (const m of s.matchAll(/[{,]\s*"?id"?\s*[=:]\s*"([^"]+)"/g)) count[m[1]] = (count[m[1]] || 0) + 1;
     return {
-        type: (s.match(/building_type"?\s*[=:]\s*"([^"]+)"/) || [])[1] || "",
+        type: (s.match(/(?:building_type|buildingType)"?\s*[=:]\s*"([^"]+)"/) || [])[1] || "",
         items,
         kinds: Object.keys(count).length,
         rooms: new Set(s.match(/\bRoom\d+\b/g) || []).size,
