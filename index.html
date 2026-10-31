@@ -59,8 +59,7 @@ button, input { font: inherit; color: inherit; }
     border-radius: 20px; padding: 30px 28px 26px; box-shadow: 0 18px 50px rgba(0,0,0,.45);
     display: flex; flex-direction: column; align-items: center; text-align: center;
 }
-.gate h1 { margin: 16px 0 4px; font-size: 26px; font-weight: 700; }
-.gate p { margin: 0 0 22px; font-size: 15px; color: var(--soft); }
+.gate h1 { margin: 16px 0 22px; font-size: 26px; font-weight: 700; }
 .gate .field {
     width: 100%; display: flex; align-items: center; gap: 10px; padding: 0 14px; min-height: 56px;
     background: var(--raised); border: 1px solid var(--line); border-radius: 14px;
@@ -112,7 +111,6 @@ button, input { font: inherit; color: inherit; }
 .page-in { max-width: 1240px; margin: 0 auto; padding: 32px 28px 48px; }
 .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 h1 { margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -.4px; }
-.page-head p { margin: 4px 0 0; font-size: 14px; color: var(--soft); }
 
 /* stat tiles */
 .stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-top: 22px; }
@@ -260,7 +258,19 @@ textarea { font: inherit; color: inherit; }
     font-size: 14.5px; min-width: 0;
 }
 .in { height: 36px; padding: 0 10px; width: 100%; }
-select.in { padding: 0 6px; }
+select.in {
+    appearance: none; -webkit-appearance: none; padding: 0 28px 0 10px; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a3a3a3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 10px center;
+    text-overflow: ellipsis; white-space: nowrap;
+}
+select.in:hover { border-color: #3a3a3a; }
+select option { background: #151515; color: #ededed; }
+input[type=number] { appearance: textfield; -moz-appearance: textfield; }
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+/* in-game bucks: the icon then the amount */
+.bucks { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; font-weight: 600; color: var(--money); }
+.bucks img { width: 15px; height: 15px; flex: none; }
 .in:focus, .ta:focus { border-color: #4a4a4a; }
 .ta { display: block; width: 100%; padding: 9px 12px; line-height: 1.5; resize: vertical; font-size: 14px; }
 .ta::placeholder, .in::placeholder { color: #5a5a5a; }
@@ -401,6 +411,126 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
 .iv-more:hover { border-color: #3a4a60; }
 .iv-foot span { margin-top: 14px; }
 
+/* ── restocking ───────────────────────────────────────── */
+.rs-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.rs-head .groups { margin-left: auto; }
+.rs-id { font-size: 13px; font-weight: 600; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+#rsStats { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+/* .avatar (the inventory headshot) shrunk down; .fallback is the letter when the picture won't load */
+.rs-av { width: 34px; height: 34px; border-radius: 10px; }
+.rs-av.fallback { font-size: 14px; font-weight: 700; }
+@keyframes rs-pulse { 50% { opacity: .65; } }
+.rs-time { text-align: right; font-size: 13px; color: var(--soft); font-variant-numeric: tabular-nums; }
+.rs-time small { display: block; font-size: 11px; color: var(--muted); }
+.rs-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.rs-tags span { font-size: 11.5px; padding: 0 7px; line-height: 18px; border-radius: 5px; background: #1f1f1f; color: var(--soft); }
+.rs-none { margin-top: 12px; padding: 18px; text-align: center; font-size: 14px; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; }
+.rs-fail { margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: rgba(239,68,68,.05); border: 1px solid rgba(239,68,68,.25); }
+.rs-fail-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.rs-fail-top .rs-time { margin-left: auto; }
+.rs-fail pre {
+    margin: 10px 0 0; padding: 10px 12px; border-radius: 8px; background: #0b0b0b; border: 1px solid #2a1414;
+    color: #ff9b9b; font-size: 12.5px; line-height: 1.5; white-space: pre-wrap; word-break: break-word;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+.rs-fail-meta { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+.rs-fail-meta b { color: var(--ink); font-weight: 600; }
+.rs-stage { font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 6px; background: rgba(239,68,68,.12); color: var(--red); border: 1px solid rgba(239,68,68,.3); }
+.rs-head > .btn { margin-left: auto; }
+/* receiver list: one card per receiver, sender | receiver, the setup boxes under it */
+.rs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 18px 16px; margin-top: 14px; }
+.rs-el { min-width: 0; }
+.rs-pc {
+    display: grid; grid-template-columns: minmax(0, 1fr) 1px minmax(0, 1fr); padding: 14px 6px 16px;
+    background: var(--raised); border: 1px solid var(--line); border-radius: 14px;
+}
+.rs-el.new .rs-pc { border-color: rgba(245,158,11,.45); background: rgba(245,158,11,.04); }
+.rs-pc > i { background: var(--line); margin: 6px 0; }
+.rs-side { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; padding: 0 10px; text-align: center; }
+.rs-side > span { font-size: 11px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; margin-bottom: 4px; }
+.rs-side.s > span { color: #c79bff; }
+.rs-side.r > span { color: #7fb0ff; }
+.rs-big { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 4px; }
+.rs-big.fallback { font-size: 22px; }
+.rs-big.nobody { background: transparent; border: 2px dashed #333; color: #555; }
+.rs-side b { max-width: 100%; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rs-side b.iv-dim { font-weight: 500; }
+.rs-side small { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.rs-side small strong { color: var(--ink); font-weight: 600; }
+.rs-side small em { font-style: normal; color: var(--money); font-weight: 600; }
+/* status over the card: what it's doing, then a bar of houses owned / wanted */
+.rs-bar { margin-bottom: 8px; }
+.rs-bar .rs-st { justify-content: center; margin: 0 0 6px; }
+.rs-prog { height: 8px; border-radius: 8px; background: #222; border: 1px solid var(--line); overflow: hidden; }
+.rs-prog i { display: block; height: 100%; border-radius: 6px; background: #444; transition: width .4s; }
+.rs-prog.run i { background: var(--green); }
+.rs-prog.queue i { background: #7fb0ff; }
+.rs-prog.full i { background: #5fcf87; }
+.rs-st { display: flex; gap: 7px; font-size: 12.5px; font-weight: 600; line-height: 1.3; margin-top: 2px; }
+.rs-st::before { content: ""; width: 7px; height: 7px; margin-top: 4px; border-radius: 50%; background: currentColor; flex: none; }
+.rs-st small { font-weight: 400; margin-left: 2px; white-space: nowrap; }
+.rs-st.setup { color: var(--amber); }
+.rs-st.setup::before { animation: rs-pulse 1.4s ease-in-out infinite; }
+.rs-st.run { color: var(--green); }
+.rs-st.queue { color: #7fb0ff; }
+.rs-st.full { color: #5fcf87; }
+.rs-st.idle { color: var(--muted); }
+.rs-st.nofile { color: var(--red); }
+.rs-ctl { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 8px; }
+.rs-ctl-s { display: flex; gap: 8px; min-width: 0; }
+.rs-ctl-s select.in { flex: 1.5 1 0; min-width: 0; }
+.rs-num { flex: 1 1 0; min-width: 76px; display: flex; align-items: center; gap: 4px; padding: 0 8px 0 0; }
+.rs-num:focus-within { border-color: #4a4a4a; }
+.rs-num input { width: 100%; min-width: 0; height: 100%; padding: 0 0 0 10px; border: 0; outline: 0; background: transparent; font: inherit; color: inherit; }
+.rs-num span { font-size: 12px; color: var(--muted); }
+.rs-btns { justify-self: end; display: flex; gap: 8px; }
+.rs-save, .rs-rm {
+    height: 36px; padding: 0 26px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--raised); font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.rs-rm { padding: 0 16px; color: var(--red); }
+.rs-rm:hover { border-color: rgba(239,68,68,.5); }
+.rs-rm.armed { background: var(--red); border-color: var(--red); color: #fff; }
+.rs-save:not(:disabled) { background: #fff; border-color: #fff; color: #0a0a0a; }
+.rs-save:disabled { color: var(--muted); cursor: default; }
+.rs-ctl .in.bad { border-color: var(--red); }
+.rs-save.saved:disabled { color: var(--green); }
+.rs-hmiss { margin-top: 6px; font-size: 12.5px; color: var(--red); }
+
+/* houses page */
+.rs-hadd { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; margin-top: 12px; }
+.rs-hadd label { flex: 0 1 280px; display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--muted); }
+.rs-hta { margin-top: 10px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12.5px; word-break: break-all; }
+.rs-hta.drag { border-color: var(--blue); background: rgba(59,130,246,.06); }
+.rs-hfoot { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+.rs-hinfo { flex: 1 1 300px; font-size: 13.5px; color: var(--muted); }
+.rs-hinfo b { color: var(--ink); font-weight: 600; }
+.rs-hgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 12px; margin-top: 12px; }
+.rs-hc { display: flex; flex-direction: column; gap: 8px; padding: 14px; background: var(--raised); border: 1px solid var(--line); border-radius: 12px; min-width: 0; }
+.rs-hc.unused { border-style: dashed; }
+.rs-hc-top { display: flex; align-items: center; gap: 8px; }
+.rs-hc-top h3 { font-size: 16px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rs-hc-top .house { flex: none; }
+.rs-hc-top .rs-x { margin-left: auto; flex: none; height: 30px; padding: 0 9px; border-radius: 8px; border: 1px solid var(--line); background: none; color: var(--muted); cursor: pointer; font-size: 13px; }
+.rs-hc-top .rs-x:hover, .rs-hc-top .rs-x.armed { color: var(--red); border-color: rgba(240,106,106,.5); }
+.rs-hc-nums { display: flex; gap: 14px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.rs-hc-nums b { color: var(--ink); font-weight: 600; }
+.rs-hc-foot { display: flex; align-items: center; gap: 8px; margin-top: auto; font-size: 12.5px; color: var(--muted); }
+.rs-hc-foot .btn { margin-left: auto; }
+.rs-hc .rs-tags i { font-style: normal; color: var(--muted); }
+.rs-hc-cost { font-size: 13px; color: var(--muted); }
+.rs-hc-cost .bucks { vertical-align: -3px; }
+.rs-hc-music { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rs-hinfo .bad, .rs-hinfo.bad { color: var(--red); }
+.rs-hinfo.ok { color: var(--green); }
+.rs-hinfo code { font-size: 12px; }
+.rs-hmiss { grid-column: 1 / -1; margin: 0; }
+
+@media (max-width: 520px) {
+    .rs-grid { grid-template-columns: 1fr; }
+    .rs-ctl { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 860px) {
     .s-cols { grid-template-columns: 1fr; }
     .s-sets { position: static; }
@@ -434,7 +564,6 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
             </svg>
         </div>
         <h1>House Trading Dashboard</h1>
-        <p>Enter the password to continue</p>
         <label class="field">
             <input id="pw" type="password" placeholder="Password" autocomplete="current-password" required autofocus>
         </label>
@@ -458,13 +587,14 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
             <button type="button" class="on" data-view="inv"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg>Inventory</button>
             <button type="button" data-view="set"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Settings</button>
             <button type="button" data-view="items"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><circle cx="7" cy="7" r="1.5"/></svg>Item Values</button>
+            <button type="button" data-view="rs"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/></svg>Restocking</button>
         </nav>
         <button class="lock" id="lockBtn" type="button" title="Hide everything and ask for the password again">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Lock
         </button>
     </aside>
     <div class="page"><div class="page-in">
-    <header class="page-head"><div><h1 id="pageTitle">Inventory Overview</h1><p id="pageSub">Pets and items on every account</p></div></header>
+    <header class="page-head"><div><h1 id="pageTitle">Inventory Overview</h1></div></header>
     <div class="stats" id="stats"></div>
 
     <div class="wrap" id="invView">
@@ -501,18 +631,14 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
         <div id="ivMsg"></div>
         <section class="card">
             <h2>Upload a new list</h2>
-            <p class="s-hint">Pick the new items.json. It's checked and compared with the list in use right here first;
-                nothing is sent until you press Upload. Every script switches to the new list by itself, no restart needed.</p>
             <label class="s-drop iv-drop" id="ivDrop">
                 <input id="ivFile" type="file" accept=".json,application/json">
                 Drop items.json here or click to choose it
-                <small id="ivLimit"></small>
             </label>
             <div id="ivCheck"></div>
         </section>
         <section class="card">
             <h2>Uploads</h2>
-            <p class="s-hint">The last 5 lists are kept. Switch back to one if a new list turns out wrong.</p>
             <div id="ivHist"></div>
         </section>
         <section class="card">
@@ -532,6 +658,54 @@ details summary { cursor: pointer; color: #7cc8fa; font-size: 14px; margin-top: 
             <div id="ivTable"></div>
             <div class="iv-foot" id="ivFoot"></div>
         </section>
+    </div>
+
+    <!-- Restocking: what restocking_site.lua is doing on every account (senders build + list, receivers collect).
+         Live from /api/restock/state, refreshed every few seconds while it's open. -->
+    <div class="wrap" id="rsView" hidden>
+        <section class="toolbar">
+            <div class="groups" id="rsPages" role="group" aria-label="Restocking page">
+                <button type="button" class="on" data-rs-page="main" aria-pressed="true">Main</button>
+                <button type="button" data-rs-page="houses" aria-pressed="false">Houses<span class="n" id="rsHouseN"></span></button>
+            </div>
+            <span class="s-pill" id="rsSync"></span>
+        </section>
+
+        <div id="rsMain">
+        <div class="stats" id="rsStats"></div>
+        <section class="card">
+            <div class="rs-head">
+                <h2>Receiver accounts <span class="s-pill" id="rsAcctN"></span><span class="s-pill warn" id="rsSetupN" hidden></span><span class="s-pill" id="rsFreeS" hidden></span></h2>
+            </div>
+            <div id="rsAccts"></div>
+        </section>
+        <section class="card">
+            <h2>Failed <span class="s-pill" id="rsFailN"></span></h2>
+            <div id="rsFail"></div>
+        </section>
+        </div>
+
+        <!-- Houses: the house files senders clone from (the script downloads them from the Worker). -->
+        <div id="rsHousesPage" hidden>
+        <section class="card">
+            <h2>Add a house file</h2>
+            <div class="rs-hadd">
+                <label>Name<input class="in" id="rsHName" maxlength="60" placeholder="e.g. Mermaid" autocomplete="off" spellcheck="false"></label>
+                <button type="button" class="btn" id="rsHPick">Choose files…</button>
+                <input type="file" id="rsHFile" accept=".lua,.json,.txt" multiple hidden>
+            </div>
+            <textarea class="ta rs-hta" id="rsHText" rows="7" spellcheck="false" placeholder='return {furniture={["f-1"]={id="column_v2_plain", ...}, ...}, textures={...}, building_type="micro_2023", ...}'></textarea>
+            <div class="rs-hfoot">
+                <div class="rs-hinfo" id="rsHInfo"></div>
+                <button type="button" class="btn" id="rsHClear">Clear</button>
+                <button type="button" class="btn primary" id="rsHAdd" disabled>Add house</button>
+            </div>
+        </section>
+        <section class="card">
+            <h2>House files <span class="s-pill" id="rsHListN"></span></h2>
+            <div class="rs-hgrid" id="rsHList"></div>
+        </section>
+        </div>
     </div>
 
     </div></div>
@@ -642,6 +816,7 @@ function lock(reason) {
     state.open.clear();
     resetSettings();
     resetItems();
+    resetRestock();
     for (const id of ["stats", "groups", "accounts", "status"]) $(id).innerHTML = "";
     $("app").hidden = true;
     $("gate").hidden = false;
@@ -872,7 +1047,7 @@ document.addEventListener("error", e => {
     if (!(img instanceof HTMLImageElement)) return;
     if (img.classList.contains("avatar")) {
         const d = document.createElement("div");
-        d.className = "avatar fallback";
+        d.className = img.className + " fallback";
         d.textContent = (img.dataset.initial || "?").toUpperCase();
         img.replaceWith(d);
     } else if (img.closest(".tile")) {
@@ -1017,11 +1192,7 @@ const failText = r => r.kind === "offline" ? "can't reach the dashboard server"
     : r.kind === "locked" ? `locked out for ${waitWords(r.retryAfter)}` : r.detail;
 
 // ── switching pages ──────────────────────────────────────────────────────────
-const VIEW_TITLES = {
-    inv: ["Inventory Overview", "Pets and items on every account"],
-    set: ["Settings", "Messages, houses and accounts the script loads"],
-    items: ["Item Values", "The price list every script trades by"],
-};
+const VIEW_TITLES = { inv: "Inventory Overview", set: "Settings", items: "Item Values", rs: "Restocking" };
 function showView(v) {
     if (!VIEW_TITLES[v]) v = "inv";
     S.view = v;
@@ -1030,8 +1201,10 @@ function showView(v) {
     $("stats").hidden = v !== "inv";
     $("setView").hidden = v !== "set";
     $("itemsView").hidden = v !== "items";
-    [$("pageTitle").textContent, $("pageSub").textContent] = VIEW_TITLES[v];
+    $("rsView").hidden = v !== "rs";
+    $("pageTitle").textContent = VIEW_TITLES[v];
     if (v === "items") return openItems();
+    if (v === "rs") return openRestock();
     if (v !== "set") return;
     if (!S.loaded) loadSettings(); else renderSettings();
 }
@@ -2045,7 +2218,7 @@ function renderImport() {
     }
     openModal(`<h2>Import settings.lua</h2>
         <label class="s-drop"><input type="file" id="impFile" accept=".lua,.txt,text/plain" multiple>
-            <b>Choose files</b><br><span class="s-hint">or drop them here (several at once is fine)</span></label>
+            <b>Choose or drop files</b></label>
         <details><summary>…or paste the text</summary>
             <textarea class="ta" id="impPaste" rows="6" style="margin-top:8px" placeholder="return { … }" spellcheck="false"></textarea>
             <button class="btn small" style="margin-top:8px" data-act="impPaste">Read pasted text</button></details>
@@ -2447,7 +2620,6 @@ function renderIvStats() {
     const usable = !!(info && info.kvBound);
     $("ivFile").disabled = !usable;
     $("ivDrop").classList.toggle("off", !usable);
-    $("ivLimit").textContent = info ? `A JSON list of items, up to ${ivSize(info.maxBytes)}` : "";
 }
 
 function renderIvMsg() {
@@ -2655,6 +2827,582 @@ $("itemsView").addEventListener("error", e => {
     s.className = img.className;
     img.replaceWith(s);
 }, true);
+</script>
+
+<script>
+// ── Restocking ───────────────────────────────────────────────────────────────
+// Drawn from POST /api/restock/state: what restocking_site.lua reports (receivers check in,
+// every slot reports its stage, finished restocks report how they ended) plus the house
+// files pasted on the Houses page. Polled while the tab is open.
+
+const RS_STEPS = [["buy", "Buy", "Buy a new house"], ["clear", "Clear", "Clear the default furniture"], ["textures", "Walls", "Apply wall and floor textures"],
+    ["furniture", "Items", "Place the furniture"], ["list", "List", "List the house for trade"], ["trade", "Trade", "Trade it to the receiver"]];
+const RS_POLL_MS = 8000;
+const RS_EMPTY = { houseFiles: [], receivers: [], ids: {}, slots: [], waitingReceivers: [], waitingSenders: [], stocked: [], traded: [], partial: [], failed: [] };
+const RS = { page: "main", data: null, busy: false, at: 0, err: "", saved: null, key: "" };
+const rsD = () => RS.data || RS_EMPTY;
+
+function resetRestock() {
+    Object.assign(RS, { data: null, busy: false, at: 0, err: "", saved: null, key: "" });
+    for (const id of ["rsStats", "rsAccts", "rsFail", "rsHList", "rsHInfo"]) $(id).innerHTML = "";
+    $("rsHList").rsHtml = "";
+    $("rsHText").value = $("rsHName").value = "";
+}
+
+// The Worker's answer, with every time moved onto this device's clock.
+function rsLoad(body) {
+    const skew = Date.now() - (Number(body.now) || Date.now());
+    const t = v => (Number(v) ? Number(v) + skew : 0);
+    const list = v => (Array.isArray(v) ? v : []);
+    RS.data = {
+        houseFiles: list(body.houseFiles).map(h => ({ ...h, added: t(h.added), top: list(h.top) })),
+        receivers: list(body.receivers).map(r => ({ ...r, firstSeen: t(r.firstSeen), seenAt: t(r.seenAt) })),
+        ids: isObj(body.ids) ? body.ids : {},
+        slots: list(body.slots).map(x => ({ ...x, startTime: t(x.startTime) })),
+        waitingReceivers: list(body.waitingReceivers).map(x => ({ ...x, since: t(x.since) })),
+        waitingSenders: list(body.waitingSenders).map(x => ({ ...x, canBuild: list(x.canBuild), since: t(x.since) })),
+        stocked: list(body.stocked).map(x => ({ ...x, finish: t(x.finish) })),
+        traded: list(body.traded).map(x => ({ ...x, start: t(x.start), finish: t(x.finish) })),
+        partial: list(body.partial).map(x => ({ ...x, finish: t(x.finish) })),
+        failed: list(body.failed).map(x => ({ ...x, finish: t(x.finish) })),
+    };
+    RS.at = Date.now();
+    RS.err = "";
+}
+
+// A page-side call came back: the new state, or why not (the password check locks the page).
+function rsAnswer(r, mine) {
+    if (mine !== session) return false;
+    if (r.kind === "wrong") { lock("The password was changed. Enter the new one."); return false; }
+    if (r.kind !== "ok") { RS.err = failText(r); rsSync(); return false; }
+    rsLoad(r.body);
+    return true;
+}
+
+async function rsFetch() {
+    if (RS.busy || !password) return;
+    RS.busy = true;
+    const mine = session;
+    const r = await post("/api/restock/state");
+    if (mine !== session) return;
+    RS.busy = false;
+    // a failed poll still redraws, so the empty lists say why
+    if (rsAnswer(r, mine) || (password && mine === session)) renderRestock();
+}
+
+// Opening the tab: draw what we have, then catch up.
+function openRestock() {
+    renderRestock(true);
+    rsFetch();
+}
+setInterval(() => { if (password && !document.hidden && !$("rsView").hidden) rsFetch(); }, RS_POLL_MS);
+
+// The pill next to the page buttons: when the data is from, or why it isn't fresh.
+function rsSync() {
+    const el = $("rsSync");
+    el.classList.toggle("warn", !!RS.err || !RS.at);
+    el.textContent = RS.err ? (RS.at ? `Couldn't refresh · showing ${clock(RS.at)}` : "Couldn't load") : RS.at ? `Live · ${clock(RS.at)}` : "Loading…";
+    el.title = RS.err ? `${RS.err[0].toUpperCase()}${RS.err.slice(1)}.` : "Refreshes every few seconds while this page is open.";
+}
+
+const rsN = n => Number(n).toLocaleString("en-US");
+const rsS = n => n === 1 ? "" : "s";
+const BUCKS_ICON = "https://static.wikia.nocookie.net/adoptme/images/1/1e/Bucks.png/revision/latest/scale-to-width-down/20?cb=20211117081630";
+const rsBucks = n => `<span class="bucks" title="${rsN(n)} bucks"><img src="${BUCKS_ICON}" alt="" width="20" height="20" referrerpolicy="no-referrer">${rsN(n)}</span>`;
+function rsDur(ms) {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60, sec = s % 60;
+    return h ? `${h}h ${String(m).padStart(2, "0")}m` : `${m}m ${String(sec).padStart(2, "0")}s`;
+}
+const rsAcct = name => rsD().receivers.find(r => r.name === name);
+// Roblox user id for a headshot: the receiver's own report, a sender's, or an inventory account of the same name.
+const rsId = name => rsAcct(name)?.userId || rsD().ids[name] || ACCOUNTS.find(a => a.username === name)?.userId || 0;
+// Same headshot the inventory uses; the page-wide error handler swaps in the letter if it won't load.
+function rsAv(name, cls = "rs-av") {
+    const id = rsId(name), letter = esc((name[0] || "?").toUpperCase());
+    return id ? `<img class="avatar ${cls}" src="${esc(HEADSHOT(id))}" alt="" data-initial="${letter}">`
+              : `<div class="avatar ${cls} fallback">${letter}</div>`;
+}
+const rsNone = text => `<div class="rs-none">${text}</div>`;
+const rsPair = (s, r) => `${s ? esc(s) : '<span class="iv-dim">-</span>'} <span class="iv-dim">→</span> ${r ? esc(r) : '<span class="iv-dim">-</span>'}`;
+const rsNum = id => id ? `#${id}` : "";
+
+// ── receiver setup ───────────────────────────────────────────────────────────
+// Where a receiver is right now, worked out from the restock lists: [class, label, detail].
+function rsState(r) {
+    const D = rsD();
+    const slot = D.slots.find(s => s.receiver === r.name);
+    if (slot) {
+        const verb = RS_VERB[slot.stage] || "Trading", of = Math.max(1, slot.target - slot.start);
+        return ["run", `${verb}…`, `house ${Math.max(1, Math.min(slot.final - slot.start + 1, of))} of ${of}${slot.id ? ` · #${slot.id}` : ""}`];
+    }
+    if (!r.house || !r.want) return ["setup", "Needs setup", `<span data-rs-since="${r.firstSeen}">${rsDur(Date.now() - r.firstSeen)}</span>`];
+    if (!rsHasFile(r.house)) return ["nofile", "Not restocking", "no house file"];
+    const w = D.waitingReceivers.find(x => x.name === r.name);
+    if (w) return ["queue", "Waiting for sender", rsNum(w.id)];
+    if (r.owns >= r.want) return ["full", "Stocked", ""];
+    return ["idle", "Not running", ago(Date.now() - r.seenAt)];
+}
+const RS_ORDER = { setup: 0, nofile: 1, run: 2, queue: 3, idle: 4, full: 5 };
+// What the status bar says while a sender works through RS_STEPS.
+const RS_VERB = { buy: "Buying the house", clear: "Clearing it", textures: "Painting walls", furniture: "Placing items", list: "Listing it", trade: "Trading" };
+const rsStateHtml = r => { const [cls, label, sub] = rsState(r); return `<div class="rs-st ${cls}">${label}${sub ? `<small>· ${sub}</small>` : ""}</div>`; };
+const rsHasFile = name => !!rsHouse(name);
+
+// The top of a receiver card: sender | receiver. d is what's in the boxes under it
+// (not saved yet maybe), so "clones N" follows the typing.
+function rsTop(r, d) {
+    const slot = rsD().slots.find(s => s.receiver === r.name), st = rsStocked(r.name);
+    let sender;
+    if (slot) {
+        sender = `${rsAv(slot.sender, "rs-big")}<b>${esc(slot.sender)}</b><small>${rsBucks(slot.bucks)}</small>`;
+    } else if (st && r.owns >= r.want) {
+        sender = `${rsAv(st.sender, "rs-big")}<b>${esc(st.sender)}</b><small>${rsBucks(st.bucks)} left</small>`;
+    } else {
+        const n = (d.want || 0) - r.owns, cost = rsHouse(d.house)?.cost;
+        const line = !d.house || !d.want ? "pick a house and how many below"
+            : !rsHasFile(d.house) ? "there's no file for that house"
+            : n > 0 ? `next free sender clones <strong>${n}</strong> × ${esc(d.house)}${cost ? `<br>about ${rsBucks(cost * n)}` : ""}`
+            : "nothing to clone, it owns enough";
+        sender = `<div class="avatar rs-big fallback nobody">?</div><b class="iv-dim">No sender yet</b><small>${line}</small>`;
+    }
+    // the bar: houses the receiver owns out of what it should own (live while trading)
+    const [cls] = rsState(r), want = slot ? slot.target : d.want || r.want || 0, owns = slot ? slot.final : r.owns;
+    const pct = want ? Math.min(100, owns / want * 100) : 0;
+    return `<div class="rs-bar">${rsStateHtml(r)}<div class="rs-prog ${cls}" title="${owns} of ${want || "?"} houses"><i style="width:${pct}%"></i></div></div>
+        <div class="rs-pc"><div class="rs-side s"><span>Sender</span>${sender}</div><i></i>
+        <div class="rs-side r"><span>Receiver</span>${rsAv(r.name, "rs-big")}<b>${esc(r.name)}</b>
+            <small>owns <strong>${r.owns}</strong> houses · seen ${ago(Date.now() - r.seenAt)}</small></div></div>`;
+}
+
+function rsAcctRow(r) {
+    const [cls] = rsState(r);
+    const names = rsD().houseFiles.map(h => h.name), known = names.includes(r.house);
+    const opts = [...names, ...(r.house && !known ? [r.house] : [])];
+    return `<div class="rs-el${cls === "setup" ? " new" : ""}" data-rs-acct="${esc(r.name)}">
+        <div data-rs-top>${rsTop(r, r)}</div>
+        <div class="rs-ctl">
+            <div class="rs-ctl-s">
+                <select class="in" data-f="house" aria-label="House to clone" title="The house the sender clones">
+                    ${r.house ? "" : `<option value="" selected disabled>Pick a house…</option>`}
+                    ${opts.map(h => `<option value="${esc(h)}"${h === r.house ? " selected" : ""}>${esc(h)}${names.includes(h) ? "" : " (no file)"}</option>`).join("")}
+                </select>
+                <label class="in rs-num" title="How many houses the receiver should own"><input type="number" min="1" max="999" step="1" inputmode="numeric"
+                    data-f="want" value="${r.want ?? ""}" placeholder="10" aria-label="Houses wanted"><span>wanted</span></label>
+            </div>
+            <div class="rs-btns">
+                <button type="button" class="rs-rm" data-rs-rm${cls === "full" ? "" : " hidden"}>Remove</button>
+                <button type="button" class="rs-save${RS.saved === r.name ? " saved" : ""}" data-rs-save disabled>${RS.saved === r.name ? "Saved ✓" : "Save"}</button>
+            </div>
+        </div>
+    </div>`;
+}
+
+// What the cards are built from; when it changes (a receiver came or went, a setup or
+// the house list changed) the cards are rebuilt, otherwise only their tops are patched.
+const rsCardsKey = () => JSON.stringify([rsD().receivers.map(r => [r.name, r.house, r.want]), rsD().houseFiles.map(h => h.name)]);
+
+function renderRsAccts() {
+    const all = rsD().receivers;
+    const list = all.map(r => [r, rsState(r)[0]])
+        .sort(([a, x], [b, y]) => RS_ORDER[x] - RS_ORDER[y] || (x === "setup" ? b.firstSeen - a.firstSeen : a.name.localeCompare(b.name)))
+        .map(([r]) => r);
+    $("rsAccts").innerHTML = list.length ? `<div class="rs-grid">${list.map(rsAcctRow).join("")}</div>`
+        : rsNone(RS.at ? "No receiver has run the script yet. Execute it on a receiver account and it shows up here."
+                       : RS.err ? "Couldn't load the restocks." : "Loading…");
+    RS.key = rsCardsKey();
+    RS.saved = null;
+}
+// The counts in the card header.
+function renderRsHead() {
+    const all = rsD().receivers;
+    const setup = all.filter(r => !r.house || !r.want).length;
+    $("rsAcctN").textContent = all.length;
+    $("rsSetupN").hidden = !setup;
+    $("rsSetupN").textContent = `${setup} need${setup === 1 ? "s" : ""} setup`;
+    // a sender that ran the script and found no receiver waiting
+    const free = rsD().waitingSenders;
+    $("rsFreeS").hidden = !free.length;
+    $("rsFreeS").textContent = `${free.length} sender${rsS(free.length)} free`;
+    $("rsFreeS").title = free.map(x => `${x.name}: ${rsN(x.bucks)} bucks${x.canBuild.length ? `, can build ${x.canBuild.join(", ")}` : ""}`).join("\n");
+}
+
+const rsField = (el, f) => el.querySelector(`[data-f="${f}"]`);
+const rsDraft = el => ({ house: rsField(el, "house").value, want: Number(rsField(el, "want").value) || 0 });
+function rsRedrawTop(el, r) {
+    const top = el.querySelector("[data-rs-top]"), html = rsTop(r, rsDraft(el));
+    if (top.rsHtml !== html) top.innerHTML = top.rsHtml = html;
+    el.querySelector("[data-rs-rm]").hidden = rsState(r)[0] !== "full";
+}
+// Redraws only the card tops, so a half-typed setup in the boxes isn't wiped.
+function rsPatchAccts() {
+    document.querySelectorAll("#rsAccts [data-rs-acct]").forEach(el => {
+        const r = rsAcct(el.dataset.rsAcct);
+        if (r) rsRedrawTop(el, r);
+    });
+}
+const rsDirty = (row, r) => rsField(row, "house").value !== (r.house || "")
+    || rsField(row, "want").value.trim() !== (r.want == null ? "" : String(r.want));
+// Someone is typing in a card: a poll mustn't rebuild them.
+const rsEditing = () => [...document.querySelectorAll("#rsAccts [data-rs-acct]")].some(row => {
+    const r = rsAcct(row.dataset.rsAcct);
+    return row.contains(document.activeElement) || (r && rsDirty(row, r));
+});
+
+async function rsSave(row) {
+    const r = rsAcct(row.dataset.rsAcct), btn = row.querySelector("[data-rs-save]");
+    if (!r || row.rsBusy || !rsDirty(row, r)) return;
+    const house = rsField(row, "house").value, raw = rsField(row, "want").value.trim(), want = Number(raw);
+    // a bad box just goes red, no message
+    const badHouse = !house, badWant = !/^\d+$/.test(raw) || want < 1 || want > 999;
+    rsField(row, "house").classList.toggle("bad", badHouse);
+    rsField(row, "want").closest(".in").classList.toggle("bad", badWant);
+    if (badHouse || badWant) return;
+    btn.disabled = row.rsBusy = true;
+    btn.textContent = "Saving…";
+    const mine = session;
+    const res = await post("/api/restock/setup", { name: r.name, house, want });
+    row.rsBusy = false;
+    if (!rsAnswer(res, mine)) {
+        if (mine !== session || !btn.isConnected) return;
+        btn.disabled = false;
+        btn.textContent = "Save";
+        btn.title = RS.err;
+        return;
+    }
+    RS.saved = r.name;
+    renderRestock(true);
+}
+
+// Asks once (label), a second click within 3 s goes ahead: true then.
+function rsArm(btn, label) {
+    if (btn.classList.contains("armed")) return true;
+    const was = btn.textContent;
+    btn.classList.add("armed");
+    btn.textContent = label;
+    clearTimeout(btn.rsT);
+    btn.rsT = setTimeout(() => { btn.classList.remove("armed"); btn.textContent = was; }, 3000);
+    return false;
+}
+
+// ── finished restocks ────────────────────────────────────────────────────────
+// A sender stays with the receiver it filled until that receiver is removed here, then
+// its script moves on to the next receiver it can pay for.
+const rsStocked = name => rsD().stocked.find(x => x.receiver === name);
+// Remove (asks once): the receiver leaves the list, its script stops, its sender moves on.
+async function rsRemove(row, btn) {
+    if (!rsArm(btn, "Sure?")) return;
+    clearTimeout(btn.rsT);
+    btn.disabled = true;
+    btn.textContent = "Removing…";
+    const mine = session;
+    if (rsAnswer(await post("/api/restock/remove", { name: row.dataset.rsAcct }), mine)) return renderRestock(true);
+    if (mine !== session || !btn.isConnected) return;
+    btn.classList.remove("armed");
+    btn.disabled = false;
+    btn.textContent = "Remove";
+    btn.title = RS.err;
+}
+
+// ── house files (Houses page) ────────────────────────────────────────────────
+// Stored by the Worker; senders download the one their receiver wants from there.
+const rsSize = b => b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`;
+const rsHouse = name => name ? rsD().houseFiles.find(h => h.name.toLowerCase() === String(name).toLowerCase()) : undefined;
+const rsHouseUse = name => rsD().receivers.filter(r => r.house === name).length;
+// "mermaid (2).lua" → "mermaid 2"
+const rsFileName = f => f.replace(/\.(lua|json|txt)$/i, "").replace(/[^A-Za-z0-9_ -]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 60);
+const RS_MAX_FILE = 1.9e6;
+
+// A quick look inside a house file, the same thing the script's loadHouseFile reads
+// (one Lua table, or JSON). It only counts things; the script does the real parsing.
+function rsParseHouse(text) {
+    const s = text.trim();
+    if (!s) return null;
+    if (!/^(return\b|[{[])/.test(s)) return { error: "That doesn't look like a house file. It should start with <code>return {</code>." };
+    if (!/(\}|\]\])$/.test(s)) return { error: "The file looks cut off, it should end with <code>}</code>. Copy the whole file." };
+    const items = (s.match(/\[?"f-\d+"\]?\s*[=:]/g) || []).length;
+    if (!items) return { error: "No furniture found in it (no <code>[\"f-…\"]</code> entries)." };
+    const bytes = new Blob([s]).size;
+    if (bytes > RS_MAX_FILE) return { error: `It's ${rsSize(bytes)}, the most the dashboard keeps is ${rsSize(RS_MAX_FILE)}.` };
+    const count = {};
+    for (const m of s.matchAll(/[{,]\s*"?id"?\s*[=:]\s*"([^"]+)"/g)) count[m[1]] = (count[m[1]] || 0) + 1;
+    return {
+        type: (s.match(/building_type"?\s*[=:]\s*"([^"]+)"/) || [])[1] || "",
+        items,
+        kinds: Object.keys(count).length,
+        rooms: new Set(s.match(/\bRoom\d+\b/g) || []).size,
+        top: Object.entries(count).sort((a, b) => b[1] - a[1]).slice(0, 5),
+        music: (s.match(/music"?\s*[=:]\s*\{[^}]*?\bname"?\s*[=:]\s*"([^"]*)"/) || [])[1] || "",
+        bytes,
+    };
+}
+
+const RH = { parsed: null, timer: 0, busy: false };
+const rsHInfo = (html, cls) => { const el = $("rsHInfo"); el.className = `rs-hinfo ${cls || ""}`; el.innerHTML = html; };
+// Says what's in the box and whether it can be added.
+function rsHouseCheck() {
+    const p = RH.parsed, name = $("rsHName").value.trim(), btn = $("rsHAdd");
+    const old = name && rsHouse(name), use = old ? rsHouseUse(old.name) : 0;
+    btn.textContent = RH.busy ? "Uploading…" : old ? "Replace house" : "Add house";
+    btn.disabled = true;
+    if (RH.busy) return;
+    if (!p) return rsHInfo("");
+    if (p.error) return rsHInfo(p.error, "bad");
+    const what = `<b>${rsN(p.items)}</b> items · <b>${p.kinds}</b> kinds · ${p.rooms} room${rsS(p.rooms)}${p.type ? ` · <span class="house">${esc(p.type)}</span>` : ""} · ${rsSize(p.bytes)}`;
+    if (!name) return rsHInfo(`${what}<br>Give it a name.`);
+    if (!RE_HOUSE.test(name)) return rsHInfo(`${what}<br><span class="bad">The name can only have letters, numbers, spaces, - and _.</span>`);
+    btn.disabled = false;
+    rsHInfo(old ? `${what}<br>Replaces the <b>${esc(old.name)}</b> file${use ? `, used by ${use} receiver${rsS(use)}` : ""}.` : what);
+}
+function rsHouseText() {
+    clearTimeout(RH.timer);
+    RH.timer = setTimeout(() => { RH.parsed = rsParseHouse($("rsHText").value); rsHouseCheck(); }, 200);
+}
+
+// Uploads one file: the body is the file, the rest rides in headers. Same name in any
+// case replaces it (the Worker keeps the old name and its measured cost).
+async function rsUpload(name, text, p) {
+    let res, body = null;
+    try {
+        res = await fetch(API + "/api/restock/house/add", {
+            method: "POST", body: text, cache: "no-store",
+            headers: {
+                "Content-Type": "text/plain; charset=utf-8", "X-Password": encodeURIComponent(password),
+                "X-House-Name": encodeURIComponent(name),
+                "X-House-Meta": encodeURIComponent(JSON.stringify({ type: p.type, items: p.items, kinds: p.kinds, rooms: p.rooms, top: p.top, music: p.music })),
+            },
+        });
+        if (!res.ok) return ivFailure(res);
+        body = await res.json();
+    } catch {
+        return res ? { kind: "error", detail: "the Worker sent back something unreadable" } : { kind: "offline" };
+    }
+    return { kind: "ok", body };
+}
+
+async function rsHouseAdd() {
+    if (RH.busy) return;
+    const text = $("rsHText").value, name = $("rsHName").value.trim();
+    clearTimeout(RH.timer);
+    const p = RH.parsed = rsParseHouse(text);
+    if (!p || p.error || !RE_HOUSE.test(name)) return rsHouseCheck();
+    const replaced = !!rsHouse(name);
+    RH.busy = true;
+    rsHouseCheck();
+    const mine = session;
+    const r = await rsUpload(name, text.trim(), p);
+    if (mine !== session) return;
+    RH.busy = false;
+    if (!rsAnswer(r, mine)) { rsHouseCheck(); return rsHInfo(`Couldn't add it: ${esc(RS.err || "the password was changed")}.`, "bad"); }
+    $("rsHText").value = $("rsHName").value = "";
+    RH.parsed = null;
+    rsHouseCheck();
+    rsHInfo(`${replaced ? "Replaced" : "Added"} <b>${esc(rsHouse(name)?.name || name)}</b>. Every receiver can pick it now.`, "ok");
+    renderRestock(true);
+}
+
+// One file: fill the box so it can be checked and named. Several: add them all,
+// named after their files.
+async function rsHouseFiles(files) {
+    files = [...files];
+    if (!files.length || RH.busy) return;
+    if (files.length === 1) {
+        const f = files[0];
+        $("rsHText").value = await f.text();
+        $("rsHName").value = rsFileName(f.name);
+        RH.parsed = rsParseHouse($("rsHText").value);
+        return rsHouseCheck();
+    }
+    const added = [], skipped = [], mine = session;
+    RH.busy = true;
+    rsHouseCheck();
+    for (const f of files) {
+        const text = await f.text(), p = rsParseHouse(text), name = rsFileName(f.name);
+        if (!p || p.error) { skipped.push(`${esc(f.name)}: ${p ? p.error : "empty"}`); continue; }
+        if (!RE_HOUSE.test(name)) { skipped.push(`${esc(f.name)}: needs a different file name`); continue; }
+        rsHInfo(`Uploading <b>${esc(name)}</b>…`);
+        const r = await rsUpload(name, text.trim(), p);
+        if (mine !== session) return;
+        if (rsAnswer(r, mine)) added.push(`<b>${esc(name)}</b>`);
+        else if (mine !== session) return;
+        else skipped.push(`${esc(f.name)}: ${esc(RS.err)}`);
+    }
+    RH.busy = false;
+    rsHouseCheck();
+    renderRestock(true);
+    rsHInfo(`${added.length ? `Added ${added.join(", ")}.` : "Nothing added."}${skipped.length ? `<br><span class="bad">Skipped ${skipped.join("; ")}</span>` : ""}`, skipped.length ? "" : "ok");
+}
+
+function renderRsHouses() {
+    const D = rsD(), list = D.houseFiles;
+    $("rsHouseN").textContent = list.length;
+    $("rsHListN").textContent = list.length;
+    // picked for a receiver but there's no file: the script can't restock those
+    const missing = [...new Set(D.receivers.map(r => r.house).filter(h => h && !rsHouse(h)))];
+    const html = missing.map(h => { const n = rsHouseUse(h);
+            return `<div class="rs-note bad rs-hmiss">No file for <b>${esc(h)}</b>, picked for ${n} receiver${rsS(n)}. Add it here or ${n === 1 ? "it" : "they"} can't be restocked.</div>`; }).join("")
+        + (list.length ? list.map(h => {
+            const use = rsHouseUse(h.name);
+            return `<div class="rs-hc${use ? "" : " unused"}" data-rs-house="${esc(h.name)}">
+                <div class="rs-hc-top"><h3 title="${esc(h.name)}">${esc(h.name)}</h3>${h.type ? `<span class="house">${esc(h.type)}</span>` : ""}
+                    <button type="button" class="rs-x" data-rs-hrm title="Delete this house file">✕</button></div>
+                <div class="rs-hc-cost" title="What one clone took the sender, measured from its bucks before and after">${h.cost
+                    ? `~${rsBucks(h.cost)} a house`
+                    : "Cost not known yet, the first clone measures it"}</div>
+                <div class="rs-hc-nums"><span><b>${rsN(h.items)}</b> items</span><span><b>${h.kinds}</b> kinds</span><span><b>${h.rooms}</b> room${rsS(h.rooms)}</span><span>${rsSize(h.bytes)}</span></div>
+                <div class="rs-tags" title="Most used furniture">${h.top.map(([id, n]) => `<span>${esc(id)} <i>×${n}</i></span>`).join("")}</div>
+                ${h.music ? `<div class="rs-hc-music">♪ ${esc(h.music)}</div>` : ""}
+                <div class="rs-hc-foot"><span>${use ? `used by <b>${use}</b> receiver${rsS(use)}` : "not used yet"} · added <span title="${esc(exact(h.added))}">${ago(Date.now() - h.added)}</span></span>
+                    <button type="button" class="btn small" data-rs-hdl>Download</button></div>
+            </div>`;
+        }).join("") : rsNone(RS.at ? "No house files yet. Paste one above." : RS.err ? "Couldn't load the house files." : "Loading…"));
+    // unchanged: leave it, so a half-clicked ✕ isn't reset
+    const el = $("rsHList");
+    if (el.rsHtml !== html) el.innerHTML = el.rsHtml = html;
+}
+
+async function rsHouseRemove(card, btn) {
+    if (!rsArm(btn, "Delete?")) return;
+    clearTimeout(btn.rsT);
+    btn.disabled = true;
+    const mine = session;
+    if (rsAnswer(await post("/api/restock/house/delete", { name: card.dataset.rsHouse }), mine)) return renderRestock(true);
+    if (mine !== session || !btn.isConnected) return;
+    btn.classList.remove("armed");
+    btn.disabled = false;
+    btn.textContent = "✕";
+    btn.title = RS.err;
+}
+async function rsHouseDownload(card, btn) {
+    const name = card.dataset.rsHouse, mine = session;
+    btn.disabled = true;
+    let r;
+    try {
+        const res = await fetch(API + "/api/restock/house/download", {
+            method: "POST", headers: { "Content-Type": "application/json" }, cache: "no-store",
+            body: JSON.stringify({ password, name }),
+        });
+        r = res.ok ? { kind: "ok", blob: await res.blob() } : await ivFailure(res);
+    } catch {
+        r = { kind: "offline" };
+    }
+    if (mine !== session) return;
+    btn.disabled = false;
+    if (r.kind === "wrong") return lock("The password was changed. Enter the new one.");
+    if (r.kind !== "ok") { btn.title = failText(r); RS.err = failText(r); return rsSync(); }
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(r.blob);
+    a.download = `${name}.lua`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+function rsPage(p) {
+    RS.page = p;
+    $("rsMain").hidden = p !== "main";
+    $("rsHousesPage").hidden = p !== "houses";
+    $("rsPages").querySelectorAll("[data-rs-page]").forEach(b => {
+        b.classList.toggle("on", b.dataset.rsPage === p);
+        b.setAttribute("aria-pressed", b.dataset.rsPage === p);
+    });
+}
+
+// Everything that stopped a restock. "Out of bucks" isn't an error in the script (the
+// receiver re-queues), but it's still a restock that didn't finish, so it's listed too.
+function rsFailures() {
+    const D = rsD();
+    return [...D.failed, ...D.partial.map(x => ({ id: x.id, sender: x.sender, receiver: x.receiver, house: x.house, stage: "out of bucks",
+            before: x.before, after: x.stoppedAt,
+            error: `Sender ran out of bucks${x.moneyLeft != null ? ` (${rsN(x.moneyLeft)} left)` : ""}. ${x.receiver} went back in the queue for the other ${x.needed} house${rsS(x.needed)}.`, finish: x.finish }))]
+        .sort((a, b) => b.finish - a.finish);
+}
+
+// full: rebuild the receiver cards too (opening the tab, a save). A poll rebuilds them
+// only when the list itself changed and nobody is typing in one; otherwise it patches the tops.
+function renderRestock(full) {
+    const D = rsD();
+    rsSync();
+    renderRsHead();
+    renderRsHouses();
+    if (full || (RS.key !== rsCardsKey() && !rsEditing()) || !$("rsAccts").firstElementChild) renderRsAccts(); else rsPatchAccts();
+    const fails = rsFailures();
+    const day = Date.now() - 24 * 3600e3;
+    const housesToday = D.traded.filter(x => x.finish > day).reduce((a, x) => a + x.after - x.before, 0)
+        + D.slots.reduce((a, x) => a + x.final - x.start, 0)
+        + D.partial.filter(x => x.finish > day).reduce((a, x) => a + x.stoppedAt - x.before, 0);
+    $("rsStats").innerHTML = [
+        [D.slots.length, "Restocking now"],
+        [D.waitingReceivers.length, "Waiting for a sender"],
+        [rsN(Math.max(0, housesToday)), "Houses traded · 24h"],
+        [fails.length, "Failed", fails.length ? "out" : ""],
+    ].map(([v, l, cls]) => `<div class="stat"><span>${l}</span><b class="${cls || ""}">${v}</b></div>`).join("");
+
+    $("rsFailN").textContent = fails.length;
+    $("rsFail").innerHTML = fails.length ? fails.map(x => `<div class="rs-fail">
+            <div class="rs-fail-top">
+                <span class="rs-id">${x.id ? "#" + x.id : "setup"}</span>
+                <span>${rsPair(x.sender, x.receiver)}</span>
+                ${x.house ? `<span class="house">${esc(x.house)}</span>` : ""}
+                ${x.stage ? `<span class="rs-stage" title="Where the script was when it stopped">stage: ${esc(x.stage)}</span>` : ""}
+                <span class="rs-time" title="${esc(exact(x.finish))}">${ago(Date.now() - x.finish)}</span>
+            </div>
+            <pre>${esc(x.error)}</pre>
+            ${x.before != null ? `<div class="rs-fail-meta"><span>Houses before <b>${x.before}</b></span><span>Houses after <b>${x.after ?? "?"}</b></span></div>` : ""}
+        </div>`).join("") : rsNone(RS.at ? "Nothing has failed." : "-");
+}
+
+$("rsView").addEventListener("click", e => {
+    const pg = e.target.closest("[data-rs-page]");
+    if (pg) return rsPage(pg.dataset.rsPage);
+    const card = e.target.closest("[data-rs-house]");
+    if (card) {
+        const rm = e.target.closest("[data-rs-hrm]"), dl = e.target.closest("[data-rs-hdl]");
+        if (rm) rsHouseRemove(card, rm);
+        if (dl) rsHouseDownload(card, dl);
+        return;
+    }
+    const row = e.target.closest("[data-rs-acct]");
+    if (!row) return;
+    if (e.target.closest("[data-rs-save]")) rsSave(row);
+    const rm = e.target.closest("[data-rs-rm]");
+    if (rm) rsRemove(row, rm);
+});
+$("rsAccts").addEventListener("input", e => {
+    const row = e.target.closest("[data-rs-acct]"), r = row && rsAcct(row.dataset.rsAcct);
+    if (!r) return;
+    rsRedrawTop(row, r);
+    const save = row.querySelector("[data-rs-save]");
+    save.disabled = !rsDirty(row, r);
+    save.classList.remove("saved");
+    save.textContent = "Save";
+    save.title = "";
+    e.target.closest(".in")?.classList.remove("bad");
+});
+$("rsHText").addEventListener("input", rsHouseText);
+$("rsHName").addEventListener("input", rsHouseCheck);
+$("rsHName").addEventListener("keydown", e => { if (e.key === "Enter" && !$("rsHAdd").disabled) rsHouseAdd(); });
+$("rsHAdd").addEventListener("click", rsHouseAdd);
+$("rsHClear").addEventListener("click", () => { if (RH.busy) return; $("rsHText").value = $("rsHName").value = ""; RH.parsed = null; rsHouseCheck(); });
+$("rsHPick").addEventListener("click", () => $("rsHFile").click());
+$("rsHFile").addEventListener("change", e => { rsHouseFiles(e.target.files); e.target.value = ""; });
+$("rsHText").addEventListener("dragover", e => { e.preventDefault(); e.target.classList.add("drag"); });
+$("rsHText").addEventListener("dragleave", e => e.target.classList.remove("drag"));
+$("rsHText").addEventListener("drop", e => {
+    e.target.classList.remove("drag");
+    if (!e.dataTransfer.files.length) return;
+    e.preventDefault();
+    rsHouseFiles(e.dataTransfer.files);
+});
+$("rsAccts").addEventListener("keydown", e => {
+    const row = e.key === "Enter" && e.target.matches("input.in, .in input") && e.target.closest("[data-rs-acct]");
+    if (row) rsSave(row);
+});
+
+// Running timers tick every second without redrawing the page.
+setInterval(() => {
+    if ($("rsView").hidden) return;
+    document.querySelectorAll("[data-rs-since]").forEach(el => { el.textContent = rsDur(Date.now() - Number(el.dataset.rsSince)); });
+}, 1000);
 </script>
 </body>
 </html>
